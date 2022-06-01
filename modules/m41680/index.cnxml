@@ -1,0 +1,500 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML">
+  <title>IIR filters</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41680</md:content-id>
+  <md:title>IIR filters</md:title>
+  <md:abstract/>
+  <md:uuid>4f7cc843-904c-4a49-a715-b84b687b7e3f</md:uuid>
+</metadata>
+
+<content>
+    <para id="id183680">An IIR filter describes a system with input <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, related by the following expression</para>
+    <equation id="id183715"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:mi>y</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>=</m:mo>
+          <m:munderover>
+<m:mrow>
+            <m:mo>∑</m:mo>
+</m:mrow>        
+    <m:mrow>
+              <m:mi>k</m:mi>
+              <m:mo>=</m:mo>
+              <m:mn>0</m:mn>
+            </m:mrow>
+<m:mrow>         
+   <m:mi>M</m:mi>
+</m:mrow>        
+  </m:munderover>
+          <m:mi>b</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>k</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mi>x</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>-</m:mo>
+            <m:mi>k</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>-</m:mo>
+          <m:munderover>
+<m:mrow>
+            <m:mo>∑</m:mo>
+</m:mrow>        
+    <m:mrow>
+              <m:mi>k</m:mi>
+              <m:mo>=</m:mo>
+              <m:mn>1</m:mn>
+            </m:mrow>
+<m:mrow>         
+   <m:mi>N</m:mi>
+</m:mrow>        
+  </m:munderover>
+          <m:mi>a</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>k</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mi>y</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>-</m:mo>
+            <m:mi>k</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id183640">Since the current output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> depends on the input as well as on <m:math overflow="scroll"><m:mi>N</m:mi></m:math> previous output values, the output of an IIR filter might not be zero well after <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> becomes zero (hence the name “Infinite”). Typically IIR filters are described by a rational transfer function of the form</para>
+    <equation id="uid1">
+      <m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:mi>H</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>z</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:mi>B</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>z</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>A</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>z</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mfrac>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mn>0</m:mn>
+              </m:msub>
+              <m:mo>+</m:mo>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mn>1</m:mn>
+              </m:msub>
+              <m:msup>
+                <m:mi>z</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:msup>
+              <m:mo>+</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mo>+</m:mo>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>M</m:mi>
+              </m:msub>
+              <m:msup>
+                <m:mi>z</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>M</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+            <m:mrow>
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mn>1</m:mn>
+              </m:msub>
+              <m:msup>
+                <m:mi>z</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:msup>
+              <m:mo>+</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mo>+</m:mo>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>N</m:mi>
+              </m:msub>
+              <m:msup>
+                <m:mi>z</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>N</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+          </m:mfrac>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id184532">where</para>
+    <equation id="uid2"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:mi>H</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>z</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>=</m:mo>
+          <m:munderover>
+<m:mrow>
+            <m:mo>∑</m:mo>
+</m:mrow>        
+    <m:mrow>
+              <m:mi>n</m:mi>
+              <m:mo>=</m:mo>
+              <m:mn>0</m:mn>
+            </m:mrow>
+<m:mrow>         
+   <m:mi>∞</m:mi>
+</m:mrow>        
+  </m:munderover>
+          <m:mi>h</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:msup>
+            <m:mi>z</m:mi>
+            <m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>n</m:mi>
+            </m:mrow>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id184598">and <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is the <emphasis effect="italics">infinite impulse response</emphasis> of the filter. Its <emphasis effect="italics">frequency response</emphasis> is given by</para>
+    <equation id="uid3">
+      <m:math overflow="scroll" mode="display">
+        <m:msub>
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>z</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>|</m:mo>
+          </m:mrow>
+          <m:mrow>
+            <m:mi>z</m:mi>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mi>ω</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:msub>
+      </m:math>
+    </equation>
+    <para id="id184684">Substituting <link target-id="uid1"/> into <link target-id="uid3"/> we obtain</para>
+    <equation id="uid4"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:mi>H</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>ω</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:mi>B</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>A</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mfrac>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+<m:mrow>         
+       <m:mi>M</m:mi>
+</m:mrow>        
+      </m:munderover>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                  <m:mi>n</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+            <m:mrow>
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:munderover>
+<m:mrow>         
+       <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+<m:mrow>         
+       <m:mi>N</m:mi>
+</m:mrow>        
+      </m:munderover>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                  <m:mi>n</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+          </m:mfrac>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id184831">Given a <emphasis effect="italics">desired</emphasis> frequency response <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>, the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> IIR design problem consists of solving the following problem</para>
+    <equation id="uid5"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>        
+    <m:mrow>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mo>,</m:mo>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+            </m:mrow>
+          </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msubsup>
+            <m:mfenced separators="" open="|" close="|">
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>B</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>A</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfrac>
+              <m:mo>-</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mfenced>
+            <m:mn>2</m:mn>
+            <m:mn>2</m:mn>
+          </m:msubsup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id184964">for the <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>+</m:mo><m:mi>N</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:math> real filter coefficients <m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mi>n</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>b</m:mi><m:mi>n</m:mi></m:msub></m:mrow></m:math> with <m:math overflow="scroll"><m:mrow><m:mi>ω</m:mi><m:mo>∈</m:mo><m:mi>Ω</m:mi></m:mrow></m:math> (where <m:math overflow="scroll"><m:mi>Ω</m:mi></m:math> is the set of frequencies for which the approximation is done). A discrete version of <link target-id="uid5"/> is given by</para>
+    <equation id="uid6"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>            
+<m:mtext>min</m:mtext>
+</m:mrow>        
+    <m:mrow>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mo>,</m:mo>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+            </m:mrow>
+          </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:munder>
+<m:mrow>         
+   <m:mo>∑</m:mo>
+</m:mrow>     
+<m:mrow>   
+    <m:msub>
+              <m:mi>ω</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+</m:mrow>        
+  </m:munder>
+          <m:msup>
+            <m:mfenced separators="" open="|" close="|">
+              <m:mfrac>
+                <m:mrow>
+                  <m:munderover>
+<m:mrow>                    
+<m:mo>∑</m:mo>
+</m:mrow>        
+            <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+<m:mrow>         
+           <m:mi>M</m:mi>
+</m:mrow>        
+          </m:munderover>
+                  <m:msub>
+                    <m:mi>b</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:msub>
+                        <m:mi>ω</m:mi>
+                        <m:mi>k</m:mi>
+                      </m:msub>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>+</m:mo>
+                  <m:munderover>
+<m:mrow>         
+           <m:mo>∑</m:mo>
+</m:mrow>        
+            <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+<m:mrow>         
+           <m:mi>N</m:mi>
+</m:mrow>        
+          </m:munderover>
+                  <m:msub>
+                    <m:mi>a</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:msub>
+                        <m:mi>ω</m:mi>
+                        <m:mi>k</m:mi>
+                      </m:msub>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mfrac>
+              <m:mo>-</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mfenced>
+            <m:mn>2</m:mn>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id185220">where <m:math overflow="scroll"><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub></m:math> are the <m:math overflow="scroll"><m:mi>L</m:mi></m:math> frequency samples over which the approximation is made. Clearly, <link target-id="uid6"/> is a nonlinear least squares optimization problem with respect to the filter coefficients.</para>
+  </content>
+  
+</document>

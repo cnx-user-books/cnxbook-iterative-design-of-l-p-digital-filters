@@ -1,0 +1,419 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Introduction to Finite Impulse Response Filters</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41670</md:content-id>
+  <md:title>Introduction to Finite Impulse Response Filters</md:title>
+  <md:abstract/>
+  <md:uuid>da625a9a-d780-4299-b2a3-ba28bbe4553d</md:uuid>
+</metadata>
+
+<content>
+    <para id="id316322">This chapter discusses the problem of designing Finite Impulse Response (FIR) digital filters according to the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> error criterion using Iterative Reweighted Least Squares methods. <link target-id="cid1"/> gives an introduction to FIR filter design, including an overview of traditional FIR design methods. For the purposes of this work we are particularly interested in <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> design methods, and their relation to relevant <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> design problems. <link target-id=""/> formally introduces the linear phase problem and presents results that are common to most of the problems considered in this work. Finally, Sections <link target-id=""/> through <link target-id=""/> present the application of the Iterative Reweighted Least Squares algorithm to other important problems in FIR digital filter design, including the relevant contributions of this work.</para>
+    <section id="cid1">
+      <title>Traditional design of FIR filters</title>
+      <para id="id316742"><link target-id=""/> introduced the notion of digital filters and filter design. In a general sense, an FIR filter design problem has the form</para>
+      <equation id="id316749"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mi>f</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id316787">where <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow></m:math> defines an error function that depends on <m:math overflow="scroll"><m:mi>h</m:mi></m:math>, and <m:math overflow="scroll"><m:mrow><m:mo>∥</m:mo><m:mo>·</m:mo><m:mo>∥</m:mo></m:mrow></m:math> is an abitrary norm. While one could come up with a number of error formulations for digital filters, this chapter elaborates on the most commonly used, namely the linear phase and complex problems (both satisfy the linear form <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>h</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:mi>h</m:mi></m:mrow></m:math> as will be shown later in this chapter). As far as norms, typically the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> norms are used. One of the contributions of this work is to demonstrate the usefulness of the more general <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norms and their feasibility by using efficient IRLS-based algorithms.</para>
+      <section id="uid1">
+        <title>Traditional design of least squares (<m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math>) FIR filters</title>
+        <para id="id316922">Typically, FIR filters are designed by <emphasis effect="italics">discretizing</emphasis> a desired frequency response <m:math overflow="scroll"><m:mrow><m:msub><m:mi>H</m:mi><m:mi>d</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> by taking <m:math overflow="scroll"><m:mi>L</m:mi></m:math> frequency samples at <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>ω</m:mi><m:mn>0</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:mo>...</m:mo><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>L</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>}</m:mo></m:mrow></m:math>. One could simply take the inverse Fourier transform of these samples and obtain <m:math overflow="scroll"><m:mi>L</m:mi></m:math> filter coefficients; this approach is known as the <emphasis effect="italics">Frequency Sampling design method</emphasis> <space count="1"/> <link target-id="bid0"/>, which basically interpolates the frequency spectrum over the samples. However, it is often more desirable to take a large number of samples to design a small filter (large in the sense that <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>≫</m:mo><m:mi>N</m:mi></m:mrow></m:math>, where <m:math overflow="scroll"><m:mi>L</m:mi></m:math> is the number of frequency samples and <m:math overflow="scroll"><m:mi>N</m:mi></m:math> is the filter order). The weighted least-squares <m:math overflow="scroll"><m:mrow><m:mo>(</m:mo><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub><m:mo>)</m:mo></m:mrow></m:math> norm (which considers the error energy) is defined by</para>
+        <equation id="uid2">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>ε</m:mi>
+                <m:mn>2</m:mn>
+              </m:msub>
+              <m:mo>≜</m:mo>
+              <m:msub>
+                <m:mrow>
+                  <m:mo>∥</m:mo>
+                  <m:mi>ϵ</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>∥</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:msup>
+                <m:mfenced separators="" open="(" close=")">
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mi>π</m:mi>
+                  </m:mfrac>
+                  <m:msubsup>
+                    <m:mo>∫</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mi>π</m:mi>
+                  </m:msubsup>
+                  <m:mi>W</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mrow>
+                      <m:mo>|</m:mo>
+                      <m:mi>D</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>H</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>|</m:mo>
+                    </m:mrow>
+                    <m:mn>2</m:mn>
+                  </m:msup>
+                  <m:mi>d</m:mi>
+                  <m:mi>ω</m:mi>
+                </m:mfenced>
+                <m:mfrac>
+                  <m:mn>1</m:mn>
+                  <m:mn>2</m:mn>
+                </m:mfrac>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id317385">where <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi mathvariant="script">F</m:mi><m:mo>(</m:mo><m:mi>h</m:mi><m:mo>)</m:mo></m:mrow></m:math> are the desired and designed amplitude responses respectively. By acknowledging the convexity of <link target-id="uid2"/>, one can drop the root term; therefore a discretized form of <link target-id="uid2"/> is given by</para>
+        <equation id="uid3"><m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>ε</m:mi>
+                <m:mn>2</m:mn>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>k</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>L</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>W</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>D</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id317544">As discussed in Appendix <link target-id=""/>, equation <link target-id="uid3"/> takes the form of <link target-id=""/>, and its solution is given by</para>
+        <equation id="uid4">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:mi>h</m:mi>
+              <m:mo>=</m:mo>
+              <m:msup>
+                <m:mfenced separators="" open="(" close=")">
+                  <m:msup>
+                    <m:mi mathvariant="bold">C</m:mi>
+                    <m:mi>T</m:mi>
+                  </m:msup>
+                  <m:msup>
+                    <m:mi mathvariant="bold">W</m:mi>
+                    <m:mi>T</m:mi>
+                  </m:msup>
+                  <m:mi mathvariant="bold">W</m:mi>
+                  <m:mi mathvariant="bold">C</m:mi>
+                </m:mfenced>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:msup>
+              <m:msup>
+                <m:mi mathvariant="bold">C</m:mi>
+                <m:mi>T</m:mi>
+              </m:msup>
+              <m:msup>
+                <m:mi mathvariant="bold">W</m:mi>
+                <m:mi>T</m:mi>
+              </m:msup>
+              <m:mi mathvariant="bold">W</m:mi>
+              <m:mi>D</m:mi>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id317643">where <m:math overflow="scroll"><m:mrow><m:mi mathvariant="bold">W</m:mi><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mo>(</m:mo><m:msqrt><m:mi>w</m:mi></m:msqrt><m:mo>)</m:mo></m:mrow></m:math> contains the weighting vector <m:math overflow="scroll"><m:mi>w</m:mi></m:math>. By solving <link target-id="uid4"/> one obtains an optimal <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> approximation to the desired frequency response <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>. Further discussion and other variations on least squares FIR design can be found in <link target-id="bid0"/>.</para>
+      </section>
+      <section id="uid5">
+        <title>Traditional design of minimax (<m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math>) FIR filters</title>
+        <para id="id317740">In contrast to <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> design, an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filter minimizes the maximum error across the designed filter's frequency response. A formal formulation of the problem <link target-id="bid1"/>, <link target-id="bid2"/> is given by</para>
+        <equation id="uid6"><m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:munder>
+<m:mrow>
+                <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+        <m:mi>h</m:mi>
+</m:mrow>        
+      </m:munder>
+<m:mrow><m:mspace width="5px"/></m:mrow>
+              <m:munder>
+<m:mrow>         
+       <m:mtext>max</m:mtext>
+</m:mrow>      
+<m:mrow>  
+        <m:mi>ω</m:mi>
+</m:mrow>         
+     </m:munder>
+              <m:mspace width="0.277778em"/>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>D</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>H</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>;</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id317851">A discrete version of <link target-id="uid6"/> is given by</para>
+        <equation id="uid7"><m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:munder>
+<m:mrow>
+                <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+        <m:mi>h</m:mi>
+</m:mrow>        
+      </m:munder>  
+<m:mrow><m:mspace width="5px"/></m:mrow>       
+     <m:munder>
+<m:mrow>
+                <m:mtext>max</m:mtext>
+</m:mrow>
+<m:mrow>        
+        <m:mi>k</m:mi>
+</m:mrow>        
+      </m:munder>
+              <m:mspace width="0.277778em"/>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>D</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mi>k</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>-</m:mo>
+                <m:msub>
+                  <m:mi>C</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mi>h</m:mi>
+                <m:mo>|</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id317931">Within the scope of filter design, the most commonly approach to solving <link target-id="uid7"/> is the use of the <emphasis effect="italics">Alternation Theorem</emphasis><space count="1"/> <link target-id="bid3"/>, in the context of linear phase filters (to be discussed in <link target-id=""/>). In a nutshell the alternation theorem states that for a length-<m:math overflow="scroll"><m:mi>N</m:mi></m:math> FIR linear phase filter there are at least <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:math><emphasis effect="italics"> extrema points</emphasis> (or frequencies). The Remez exchange algorithm <link target-id="bid0"/>, <link target-id="bid1"/>, <link target-id="bid2"/> aims at finding these extrema frequencies iteratively, and is the most commonly used method for the minimax linear phase FIR design problem. Other approaches use more standard linear programming methods including the Simplex algorithm <link target-id="bid4"/>, <link target-id="bid5"/> or interior point methods such as Karmarkar's algorithm <link target-id="bid6"/>.</para>
+        <para id="id318017">The <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> problem is fundamental in filter design. While this document is not aimed covering the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> problem in depth, portions of this work are devoted to the use of IRLS methods for standard problems as well as some innovative uses of minimax optimization.</para>
+      </section>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid1">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Antoniou, Andreas</bib:author>
+        <bib:title>Digital Filters: Analysis, Design, and Applications</bib:title>
+        <bib:publisher>McGraw-Hill</bib:publisher>
+        <bib:year>1993</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition>2nd</bib:edition>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid3">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Cheney, E. W.</bib:author>
+        <bib:title>Introduction to Approximation Theory</bib:title>
+        <bib:publisher>McGraw-Hill</bib:publisher>
+        <bib:year>1966</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series>Intl. Series in Pure and Applied Mathematics</bib:series>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid4">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Chvatal, Vasek</bib:author>
+        <bib:title>Linear Programming</bib:title>
+        <bib:publisher>Freeman and Co.</bib:publisher>
+        <bib:year>1980</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid2">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Cunningham, Edward</bib:author>
+        <bib:title>Digital Filtering: An Introduction</bib:title>
+        <bib:publisher>Houghton-Mifflin</bib:publisher>
+        <bib:year>1992</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Parks, T. W. and Burrus, C. S.</bib:author>
+        <bib:title>Digital Filter Design</bib:title>
+        <bib:publisher>John Wiley and Sons</bib:publisher>
+        <bib:year>1987</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid6">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Ruzinsky, Steven A.</bib:author>
+        <bib:title><!--no math allowed in bib entries--> and <!--no math allowed in bib entries--> Minimization via a Variant of Karmarkar's Algorithm</bib:title>
+        <bib:journal>IEEE Trans. on Acoustics, Speech and Signal Processing</bib:journal>
+        <bib:year>1989</bib:year>
+        <!--optional fields-->
+        <bib:volume>37</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>245-253</bib:pages>
+        <bib:month>Febr.</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid5">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Strang, G.</bib:author>
+        <bib:title>Introduction to Applied Mathematics</bib:title>
+        <bib:publisher>Wellesley-Cambridge Press</bib:publisher>
+        <bib:year>1986</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+  </bib:file>
+</document>

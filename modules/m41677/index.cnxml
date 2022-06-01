@@ -1,0 +1,454 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML">
+  <title>l_p error as a function of frequency</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41677</md:content-id>
+  <md:title>l_p error as a function of frequency</md:title>
+  <md:abstract/>
+  <md:uuid>6f10bae1-4e97-4d91-add8-c6296b547088</md:uuid>
+</metadata>
+
+<content>
+    <para id="id2253177">Previous sections have discussed the importance of complex least-square and Chebishev error criteria in the context of filter design. In many applications any of these two approaches would provide adequate results. However, a case could be made where one might want to minimize the error energy in a range of frequencies while keeping control of the maximum error in a different band. This idea results particularly interesting when one considers the use of different <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norms in different frequency bands. In principle one would be interested in solving</para>
+    <equation id="uid1"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msub>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mi>p</m:mi>
+          </m:msub>
+          <m:mo>+</m:mo>
+          <m:msub>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>s</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>s</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mi>q</m:mi>
+          </m:msub>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id2254214">where <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>∈</m:mo><m:msub><m:mi>Ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>∈</m:mo><m:msub><m:mi>Ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>}</m:mo></m:mrow></m:math> represent the pass and stopband frequencies respectively. In principle one would want <m:math overflow="scroll"><m:mrow><m:msub><m:mi>Ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>∩</m:mo><m:msub><m:mi>Ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mrow><m:mo>{</m:mo><m:mi>∅</m:mi><m:mo>}</m:mo></m:mrow></m:mrow></m:math>. Therefore problem <link target-id="uid1"/> can be written as</para>
+    <equation id="uid2"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:mroot>
+            <m:mrow>
+              <m:munder>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+        <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+</m:mrow>        
+      </m:munder>
+              <m:mspace width="0.277778em"/>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>D</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>p</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>p</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>;</m:mo>
+                    <m:mi>h</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+                <m:mi>p</m:mi>
+              </m:msup>
+            </m:mrow>
+            <m:mi>p</m:mi>
+          </m:mroot>
+          <m:mo>+</m:mo>
+          <m:mroot>
+            <m:mrow>
+              <m:munder>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>     
+<m:mrow>   
+        <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>s</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+</m:mrow>
+              </m:munder>
+              <m:mspace width="0.277778em"/>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>D</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>;</m:mo>
+                    <m:mi>h</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+                <m:mi>q</m:mi>
+              </m:msup>
+            </m:mrow>
+            <m:mi>q</m:mi>
+          </m:mroot>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id2254514">One major obstacle in <link target-id="uid2"/> is the presence of the roots around the summation terms. These roots prevent us from writing <link target-id="uid2"/> in a simple vector form. Instead, one can consider the use of a similar <emphasis effect="italics">metric</emphasis> function as follows</para>
+    <equation id="uid3"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:munder>
+<m:mrow>            
+<m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+    <m:msub>
+              <m:mi>ω</m:mi>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mi>b</m:mi>
+              </m:mrow>
+            </m:msub>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msup>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:mi>p</m:mi>
+          </m:msup>
+          <m:mo>+</m:mo>
+          <m:munder>
+<m:mrow>
+            <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+    <m:msub>
+              <m:mi>ω</m:mi>
+              <m:mrow>
+                <m:mi>s</m:mi>
+                <m:mi>b</m:mi>
+              </m:mrow>
+            </m:msub>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msup>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>s</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>s</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:mi>q</m:mi>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id2254712">This expression is similar to <link target-id="uid2"/> but does not include the root terms. An advantage of using the IRLS approach on <link target-id="uid3"/> is that one can formulate this problem in the frequency domain and properly separate residual terms from different bands into different vectors. In this manner, the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> modified measure given by <link target-id="uid3"/> can be made into a frequency-dependent function of <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> as follows,</para>
+    <equation id="id2254766"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msubsup>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>p</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>p</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:msubsup>
+          <m:mo>=</m:mo>
+          <m:munder>
+<m:mrow>         
+   <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+    <m:mi>ω</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msup>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>p</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id2254901">Therefore this <emphasis effect="italics">frequency-varying</emphasis><space count="1"/> <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem can be solved following the modified IRLS algorithm outlined in <link target-id=""/> with the following modification: at the <m:math overflow="scroll"><m:mi>i</m:mi></m:math>-th iteration the weights are updated according to</para>
+    <equation id="id2254939">
+      <m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:msub>
+            <m:mi>w</m:mi>
+            <m:mi>i</m:mi>
+          </m:msub>
+          <m:mo>=</m:mo>
+          <m:msup>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:mi>D</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi mathvariant="bold">C</m:mi>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>i</m:mi>
+              </m:msub>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>p</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>-</m:mo>
+              <m:mn>2</m:mn>
+            </m:mrow>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id2254996">It is fundamental to note that the proposed method does not indeed solve a linear combination of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norms. In fact, it can be shown that the expression <link target-id="uid3"/> is not a norm but a metric. While from a theoretical perspective this fact might make <link target-id="uid3"/> a less interesting distance, as it turns out one can use <link target-id="uid3"/> to solve the far more interesting CLS problem, as discussed below in <link target-id=""/>.</para>
+  </content>
+  
+</document>

@@ -1,0 +1,561 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Infinite Impulse Response (IIR) l_p design</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41669</md:content-id>
+  <md:title>Infinite Impulse Response (IIR) l_p design</md:title>
+  <md:abstract/>
+  <md:uuid>4c2893f8-1225-423b-9041-12cbb16069fd</md:uuid>
+</metadata>
+
+<content>
+    <para id="id276421">In contrast to FIR filters, an <emphasis effect="italics">Infinite Impulse Response</emphasis> (<emphasis effect="bold">IIR</emphasis>) filter is defined by two ordered vectors <m:math overflow="scroll"><m:mrow><m:mi>a</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>b</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mrow><m:mi>M</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msup></m:mrow></m:math> (where <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>M</m:mi><m:mo>,</m:mo><m:mi>N</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>), with frequency response given by</para>
+    <equation id="id276854"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:mi>H</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>ω</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:mi>B</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>A</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mfrac>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mi>M</m:mi>
+              </m:munderover>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                  <m:mi>n</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+            <m:mrow>
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:munderover>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                  <m:mi>n</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+          </m:mfrac>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id277162">Hence the general <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> approximation problem is</para>
+    <equation id="uid1"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>        
+    <m:mrow>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mo>,</m:mo>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+            </m:mrow>
+          </m:munder>
+          <m:msub>
+            <m:mfenced separators="" open="∥" close="∥">
+              <m:mfrac>
+                <m:mrow>
+                  <m:munderover>
+<m:mrow>
+                    <m:mo>∑</m:mo>
+</m:mrow>        
+            <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mi>M</m:mi>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>b</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>+</m:mo>
+                  <m:munderover>
+<m:mrow>         
+           <m:mo>∑</m:mo>
+</m:mrow>        
+            <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+<m:mrow>         
+           <m:mi>N</m:mi>
+</m:mrow>        
+          </m:munderover>
+                  <m:msub>
+                    <m:mi>a</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mfrac>
+              <m:mo>-</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mfenced>
+            <m:mi>p</m:mi>
+          </m:msub>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id277333">which can be posed as a weighted least squares problem of the form</para>
+    <equation id="uid2"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>        
+    <m:mrow>
+              <m:msub>
+                <m:mi>a</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mo>,</m:mo>
+              <m:msub>
+                <m:mi>b</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+            </m:mrow>
+          </m:munder>
+          <m:msubsup>
+            <m:mrow><m:mfenced separators="" open="∥" close="∥">
+              <m:mi>w</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>·</m:mo>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mfrac>
+                  <m:mrow>
+                    <m:munderover>
+<m:mrow>
+                      <m:mo>∑</m:mo>
+</m:mrow>        
+              <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>0</m:mn>
+                      </m:mrow>
+                      <m:mi>M</m:mi>
+                    </m:munderover>
+                    <m:msub>
+                      <m:mi>b</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:msub>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mi>j</m:mi>
+                        <m:mi>ω</m:mi>
+                        <m:mi>n</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mn>1</m:mn>
+                    <m:mo>+</m:mo>
+                    <m:munderover>
+<m:mrow>         
+             <m:mo>∑</m:mo>
+</m:mrow>        
+              <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:munderover>
+                    <m:msub>
+                      <m:mi>a</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:msub>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mi>j</m:mi>
+                        <m:mi>ω</m:mi>
+                        <m:mi>n</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                  </m:mrow>
+                </m:mfrac>
+                <m:mo>-</m:mo>
+                <m:mi>D</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfenced>
+            </m:mfenced></m:mrow>
+            <m:mn>2</m:mn>
+            <m:mn>2</m:mn>
+          </m:msubsup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id277511">It is possible to design similar problems to the ones outlined in <link target-id=""/> for FIR filters. However, it is worth keeping in mind the additonal complications that IIR design involves, including the nonlinear least squares problem presented in <link target-id="uid3"/> below.</para>
+    <section id="uid3">
+      <title>Least squares IIR literature review</title>
+      <para id="id277532">The weighted nonlinear formulation presented in <link target-id="uid2"/> suggests the possibility of taking advantage of the flexibilities in design from the FIR problems. However this point comes at the expense of having to solve at each iteration a weighted nonlinear <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> problem. Solving least squares approximations with rational functions is a nontrivial problem that has been studied extensively in diverse areas including statistics, applied mathematics and electrical engineering. One of the contributions of this document is a presentation in <link target-id=""/> on the subject of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> IIR filter design that captures and organizes previous relevant work. It also sets the framework for the proposed methods used in this document.</para>
+      <para id="id277574">In the context of IIR digital filters there are three main groups of approaches to <link target-id="uid2"/>. <link target-id=""/> presents relevant work in the form of traditional optimization techniques. These are methods derived mainly from the applied mathematics community and are in general efficient and well understood. However the generality of such methods occasionally comes at the expense of being inefficient for some particular problems. Among the methods found in literature, the Davidon-Flecther-Powell (<emphasis effect="bold">DFP</emphasis>) algorithm <link target-id="bid0"/>, the damped Gauss-Newton method <link target-id="bid1"/>, <link target-id="bid2"/>, the Levenberg-Marquardt algorithm <link target-id="bid3"/>, <link target-id="bid4"/>, and the method of Kumaresan <link target-id="bid5"/>, <link target-id="bid6"/> form the basis of a number of methods to solve <link target-id="uid1"/>.</para>
+      <para id="id277634">A different approach to <link target-id="uid1"/> from traditional optimization methods consists in <emphasis effect="italics">linearizing</emphasis><space count="4"/>  <link target-id="uid2"/> by transforming the problem into a simpler, linear form. While in principle this proposition seems inadequate (as the original problem is being transformed), <link target-id=""/> presents some logical attemps at linearizing <link target-id="uid2"/> and how they connect with the original problem. The concept of <emphasis effect="italics">equation error</emphasis> (a <emphasis effect="bold">weighted</emphasis> form of the <emphasis effect="italics">solution error</emphasis> that one is actually interested in solving) has been introduced and employed by a number of authors. In the context of filter design, E. Levy <link target-id="bid7"/> presented an equation error linearization formulation in 1959 applied to analog filters. An alternative equation error approach presented by C. S. Burrus <link target-id="bid8"/> in 1987 is based on the methods by Prony <link target-id="bid9"/> and Pade <link target-id="bid10"/>. The method by Burrus can be applied to frequency domain digital filter design, and is used in selected stages in some of the algorithms presented in this work.</para>
+      <para id="id277701">An extension of the equation error methods is the group of <emphasis effect="italics">iterative prefiltering</emphasis> algorithms presented in <link target-id=""/>. These methods build on equation error methods by weighting (or <emphasis effect="italics">prefiltering</emphasis>) their equation error formulation iteratively, with the intention to converge to the minimum of the solution error. Sanathanan and Koerner <link target-id="bid11"/> presented in 1963 an algorithm (<emphasis effect="bold">SK</emphasis>) that builds on an extension of Levy's method by iterating on Levy's formulation. Sid-Ahmed, Chottera and Jullien <link target-id="bid12"/> presented in 1978 a similar algorithm to the SK method but applied to the digital filter problem.</para>
+      <para id="id277737">A popular and well understood method is the one by Steiglitz and McBride <link target-id="bid13"/>, <link target-id="bid14"/> introduced in 1966. The <emphasis effect="bold">SMB</emphasis> method is time-domain based, and has been extended to a number of applications, including the frequency domain filter design problem <link target-id="bid15"/>. Steiglitz and McBride used a two-phase method based on linearization. Initially (in <emphasis effect="italics">Mode-1</emphasis>) their algorithm is essentially that of Sanathanan and Koerner but in time. This approach often diverges when close to the solution; therefore their method can optionally switch to <emphasis effect="italics">Mode-2</emphasis>, where a more traditional derivative-based approach is used.</para>
+      <para id="id277777">A more recent linearization algorithm was presented by L. Jackson <link target-id="bid16"/> in 2008. His approach is an iterative prefiltering method based directly in frequency domain, and uses diagonalization of certain matrices for efficiency.</para>
+      <para id="id277787">While intuitive and relatively efficient, most linearization methods share a common problem: they often diverge close to the solution (this effect has been noted by a number of authors; a thorough review is presented in <link target-id="bid15"/>). <link target-id=""/> presents the <emphasis effect="italics">quasilinearization</emphasis> method derived by A. Soewito <link target-id="bid15"/> in 1990. This algorithm is robust, efficient and well-tailored for the least squares IIR problem, and is the method of choice for this work.</para>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid9">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>de Prony, Baron (Gaspard Clair Francois Marie Riche)</bib:author>
+        <bib:title>Essai Experimental et Analytique: Sur les lois de la Dilatabilite des fluides elastiques et sur celles de la Force expansive de la vapeur de l'eau et de la vapeur de l'alkool, a differentes temperatures.</bib:title>
+        <bib:journal>Journal de l'Ecole Polytechnique (Paris)</bib:journal>
+        <bib:year>1795</bib:year>
+        <!--optional fields-->
+        <bib:volume>1</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>24-76</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid1">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Dennis, J. E. and Schnabel, R. B.</bib:author>
+        <bib:title>Numerical Methods for Unconstrained Optimization and Nonlinear Equations</bib:title>
+        <bib:publisher>SIAM</bib:publisher>
+        <bib:year>1996</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address>Philadelphia, PA</bib:address>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Fletcher, R. and Powell, M. J. D.</bib:author>
+        <bib:title>A Rapidly Convergent Descent Method for Minimization</bib:title>
+        <bib:journal>Computer Journal</bib:journal>
+        <bib:year>1963</bib:year>
+        <!--optional fields-->
+        <bib:volume>6</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>163-168</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid6">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Hildebrand, F. B.</bib:author>
+        <bib:title>Introduction to Numerical Analysis</bib:title>
+        <bib:publisher>McGraw-Hill</bib:publisher>
+        <bib:year>1974</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid16">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Jackson, Leland B.</bib:author>
+        <bib:title>Frequency-Domain Steiglitz-McBride Method for Least-Squares IIR Filter Design, ARMA Modeling, and Periodogram Smoothing</bib:title>
+        <bib:journal>IEEE Signal Processing Letters</bib:journal>
+        <bib:year>2008</bib:year>
+        <!--optional fields-->
+        <bib:volume>15</bib:volume>
+        <bib:number/>
+        <bib:pages>49-52</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid5">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Kumaresan, R. and Burrus, C. S.</bib:author>
+        <bib:title>Fitting a Pole-Zero Filter Model to Arbitrary Frequency Response Samples</bib:title>
+        <bib:journal>Proc. ASILOMAR</bib:journal>
+        <bib:year>1991</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:number/>
+        <bib:pages>1649-1652</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid13">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>L. E.McBride, H. W. Schaefgen and Steiglitz, K.</bib:author>
+        <bib:title>Time-Domain Approximation by Iterative Methods</bib:title>
+        <bib:journal>IEEE Transactions on Circuit Theory</bib:journal>
+        <bib:year>1966</bib:year>
+        <!--optional fields-->
+        <bib:volume>CT-13</bib:volume>
+        <bib:number>4</bib:number>
+        <bib:pages>381-87</bib:pages>
+        <bib:month>December</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid7">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Levy, E. C.</bib:author>
+        <bib:title>Complex-Curve Fitting</bib:title>
+        <bib:journal>IRE Transactions on Automatic Control</bib:journal>
+        <bib:year>1959</bib:year>
+        <!--optional fields-->
+        <bib:volume>AC-4</bib:volume>
+        <bib:number>1</bib:number>
+        <bib:pages>37-43</bib:pages>
+        <bib:month>May</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid12">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>M. A. Sid-Ahmed, A. Chottera and Jullien, G. A.</bib:author>
+        <bib:title>Computational Techniques for Least-Square Design of Recursive Digital Filters</bib:title>
+        <bib:journal>IEEE Transactions on Acoustics, Speech, and Signal Processing</bib:journal>
+        <bib:year>1978</bib:year>
+        <!--optional fields-->
+        <bib:volume>ASSP-26</bib:volume>
+        <bib:number>5</bib:number>
+        <bib:pages>477-480</bib:pages>
+        <bib:month>October</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid10">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Pade, Henri Eugene</bib:author>
+        <bib:title>Sur la Representation Approchee d'une Fonction par des Fractions Rationnelles</bib:title>
+        <bib:journal>Annales Scientifiques de L'Ecole Normale Superieure (Paris)</bib:journal>
+        <bib:year>1892</bib:year>
+        <!--optional fields-->
+        <bib:volume>9</bib:volume>
+        <bib:number>3</bib:number>
+        <bib:pages>1-98</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid8">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Parks, T. W. and Burrus, C. S.</bib:author>
+        <bib:title>Digital Filter Design</bib:title>
+        <bib:publisher>John Wiley and Sons</bib:publisher>
+        <bib:year>1987</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid11">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Sanathanan, C. K. and Koerner, J.</bib:author>
+        <bib:title>Transfer Function Synthesis as a Ratio of Two Complex Polynomials</bib:title>
+        <bib:journal>IEEE Transactions on Automatic Control</bib:journal>
+        <bib:year>1963</bib:year>
+        <!--optional fields-->
+        <bib:volume>AC-8</bib:volume>
+        <bib:number/>
+        <bib:pages>56-58</bib:pages>
+        <bib:month>January</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid14">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Steiglitz, K. and McBride, L. E.</bib:author>
+        <bib:title>A Technique for the Identification of Linear Systems</bib:title>
+        <bib:journal>IEEE Transactions on Automatic Control</bib:journal>
+        <bib:year>1965</bib:year>
+        <!--optional fields-->
+        <bib:volume>AC-10</bib:volume>
+        <bib:number/>
+        <bib:pages>461-64</bib:pages>
+        <bib:month>October</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid3">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Spanos, J. T. and Mingori, D. L.</bib:author>
+        <bib:title>Newton Algorithm for Fitting Transfer Functions to Frequency Measurements</bib:title>
+        <bib:journal>Journal of Guidance, Control and Dynamics</bib:journal>
+        <bib:year>1993</bib:year>
+        <!--optional fields-->
+        <bib:volume>16</bib:volume>
+        <bib:number>1</bib:number>
+        <bib:pages>34-39</bib:pages>
+        <bib:month>January</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid15">
+      <bib:phdthesis>
+        <!--required fields-->
+        <bib:author>Soewito, Atmadji W.</bib:author>
+        <bib:title>Least Square Digital Filter Design in the Frequency Domain</bib:title>
+        <bib:school>Rice University</bib:school>
+        <bib:year>1990</bib:year>
+        <!--optional fields-->
+        <bib:type>PhD. Thesis</bib:type>
+        <bib:address/>
+        <bib:month>December</bib:month>
+        <bib:note/>
+      </bib:phdthesis>
+    </bib:entry>
+    <bib:entry id="bid4">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Sorensen, D. C.</bib:author>
+        <bib:title>Newton's Method with a Dodel Trust Region Modification</bib:title>
+        <bib:journal>SIAM Journal of Numerical Analysis</bib:journal>
+        <bib:year>1982</bib:year>
+        <!--optional fields-->
+        <bib:volume>16</bib:volume>
+        <bib:number/>
+        <bib:pages>409-426</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid2">
+      <bib:inbook>
+        <!--required fields-->
+        <bib:author>T. P. Krauss, L. Shure et al.</bib:author>
+        <bib:title>Signal Processing Toolbox User's Guide</bib:title>
+        <bib:chapter>2</bib:chapter>
+        <bib:pages>143-145</bib:pages>
+        <bib:publisher>The MathWorks</bib:publisher>
+        <bib:year>1994</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:inbook>
+    </bib:entry>
+  </bib:file>
+</document>

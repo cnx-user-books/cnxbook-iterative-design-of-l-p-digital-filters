@@ -1,0 +1,241 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>l_p approximation</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41683</md:content-id>
+  <md:title>l_p approximation</md:title>
+  <md:abstract/>
+  <md:uuid>4bb33d7d-4583-43f9-802c-cca7f7d08870</md:uuid>
+</metadata>
+
+<content>
+    <para id="id2253177">Infinite Impulse Response (IIR) filters are important tools in signal processing. The flexibility they offer with the use of poles and zeros allows for relatively small filters meeting specifications that would require somewhat larger FIR filters. Therefore designing IIR filters in an efficient and robust manner is an inportant problem.</para>
+    <para id="id2253186">This section covers the design of a number of important <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR problems. The methods proposed are consistent with the methods presented for FIR filters, allowing one to build up on the lessons learned from FIR design problems. The complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR problem is first presented in <link target-id="uid2"/>, being an essential tool for other relevant problems. The <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> frequency-dependent IIR problem is also introduced in <link target-id="uid2"/>. While the frequency-dependent formulation might not be practical in itself as a filter design formulation, it is fundamental for the more relevant magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR filter design problem, presented in <link target-id="uid6"/>.</para>
+    <para id="id2253898">Some complications appear when designing IIR filters, among which the intrinsic least squares solving step clearly arises from the rest. Being a nonlinear problem, special handling of this step is required. It was detemined after thorough experimentation that the <emphasis effect="italics">quasilinearization</emphasis> method of Soewito presented in <link target-id=""/> can be employed successfully to handle this issue.</para>
+    <figure id="uid1"><media id="uid1_media" alt="A block diagram of complex l_p IIR algorithm. Starting from the top there is an oval containing the phrase 'Given a^_0,b^_0'. An arrow points down from this oval to a rectangular box containing 'w_k(ω)=...' To the right of this box is an pointing left to the box labeling it 'L_p Weighting'. An arrow points down from the box to another box containing 'Find a^,b^'. Another arrow points down to a diamond shaped box containing 'Stop?'. An arrow with the letter 'N' next to it points up to the arrow pointing to the third box containing 'Find a^,b^'. A dashed square surrounds the blocks 'Find a^,b^' and 'Stop?'. The box is labeled to the right with a bracket and the phrase 'Solve L_p complex problem via L_2 quasilinearization'. Below the last block, the one containing 'Stop?' is an arrow with a 'Y' to the left of it points down to another diamond shaped block containing the phrase 'Stop?'. To the left of this block there is an arrow with labeled 'N' that points up all the way to the first arrow pointing to 'w_k(ω)=...'. Below the diamond shaped box there is another arrow with a 'Y' to the left pointing down to an oval shaped block containing the word 'END'.">
+        <image mime-type="image/png" src="../../media/iir_cplx.png" id="uid1_onlineimage" width="644" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 644. --></image>
+          </media>
+      
+    <caption>Block diagram for complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR algorithm.</caption></figure>
+    <section id="uid2">
+      <title>Complex and frequency-dependent <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> approximation</title>
+      <para id="id2253967">Chapter <link target-id=""/> introduced the problem of designing <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> complex FIR filters. The complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR algorithm builds up on its FIR counterpart by introducing a <emphasis effect="italics">nested structure</emphasis> that internally solves for an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> complex IIR problem. <link target-id="uid1"/> illustrates this procedure in more detail. This method was first presented in <link target-id="bid0"/>.</para>
+      <figure id="uid3"><media id="uid3_media" alt="A graph of the Results for complex l_100 IIR design. There are two wave forms. One is identified by a solid red line and labeled L_p solutions. The other wave is identified by a blue dashed line and labeled L_2 solution. The desired function is indicated with a blue dotted line. Both wave forms start at (0,1) and then at about (0.2,0) both waves have there largest peak before falling drastically to about (0.25,0). The waves then continue along the x axis till (.5,0) where the graph ends. The dotted blue line runs along y=1 to (.2,1). Then the dotted blue line continues at y=0 from (0.25,0) to (o.5,0).">
+          <image mime-type="image/png" src="../../media/lpiircplx1.png" id="uid3_onlineimage" width="698" print-width="3in"><!-- NOTE: attribute width changes image size online (pixels). original width is 698. --></image>
+        </media>
+        
+      <caption>Results for complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>100</m:mn></m:msub></m:math> IIR design.</caption></figure>
+      <figure id="uid4"><media id="uid4_media" alt="A graph containing two wave forms. One is identified with a solid red line and labeled L_p solution. The other is identified with a blue dashed line and labeled L_2 solution. The desired function is indicated by a horizontal blue dotted line at y=0. The wave of L_p solution begins are (0,.07) drops to about (0.25,0.02) and then climes to (0.28,0.07) and then falls to (0.35,0.04). The wave of L_2 starts at (0,0.15) drops to (0.26,0.01). Then it climbs to about (0.3,0.045) then drops to (0.36,0.03).">
+          <image mime-type="image/png" src="../../media/lpiircplx2.png" id="uid4_onlineimage" width="698" print-width="3in"><!-- NOTE: attribute width changes image size online (pixels). original width is 698. --></image>
+        </media>
+        
+      <caption>Maximum error for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>100</m:mn></m:msub></m:math> complex IIR designs.</caption></figure>
+      <figure id="uid5"><media id="uid5_media" alt="A graph labeled L_p error. There is one wave form present in the graph, and it is identified by a solid red line. The wave starts at (0.01,0) rises to (0.075,0.07) falls to (0.14,0.005). The wave continues by rising to (0.18,0.07) drops to (0.2,0.01) and rises to (0.2,0.07). The wave stops here and then the wave begins again at (0.24,0.07) and then drops to (0.25,0.015) and then rises to (0.27,0.07). Finally it drops to (0.35,0.037) and then exits the graphs at (0.5,0.05).">
+          <image mime-type="image/png" src="../../media/lpiircplx3.png" id="uid5_onlineimage" width="698" print-width="3in"><!-- NOTE: attribute width changes image size online (pixels). original width is 698. --></image>
+        </media>
+        
+      <caption>Error curve for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>100</m:mn></m:msub></m:math> complex IIR design.</caption></figure>
+      <para id="id2254134">Compared to its FIR counterpart, the IIR method only replaces the weighted linear least squares problem for Soewito's quasilinearization algorithm. While this nesting approach might suggest an increase in computational expense, it was found in practice that after the initial <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> iteration, in general the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> iterations only require from one to only a few internal weighted <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> quasilinearization iterations, thus maintaining the algorithm efficiency. Figures <link target-id="uid3"/> through <link target-id="uid5"/> present results for a design example using a length-5 IIR filter with <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>100</m:mn></m:mrow></m:math> and transition edge frequencies of 0.2 and 0.24 (in normalized frequency).</para>
+      <para id="id2254212"><link target-id="uid3"/> compares the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> results and includes the desired frequency samples. Note that no transition band was specified. <link target-id="uid4"/> illustrates the effect of increasing <m:math overflow="scroll"><m:mi>p</m:mi></m:math>. The largest error for the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> solution is located at the transition band edges. As <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases the algorithm weights the larger errors heavier; as a result the largest errors tend to decrease. In this case the magnitude of the frequency response went from 0.155 at the stopband edge (in the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> case) to 0.07 (for the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> design). <link target-id="uid5"/> shows the error function for the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> design, illustrating the quasiequiripple behavior for large values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math>.</para>
+      <para id="id2254348">Another fact worth noting from <link target-id="uid3"/> is the increase in the peak in the right hand side of the passband edge (around <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>22</m:mn></m:mrow></m:math>). The <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution increased the amplitude of this peak with respect to the corresponding <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> solution. This is to be expected, since this peak occurs at frequencies not included in the specifications, and since the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> algorithm will move poles and zeros around in order to meet find the optimal <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution (based on the frequencies included for the filter derivation). The addition of a specified transition band function (such as a spline) would allow for control of this effect, depending on the user's preferences.</para>
+      <para id="id2254441">The frequency-dependent FIR problem was first introduced in <link target-id=""/>. Following the FIR approach, one can design IIR frequency-dependent filters by merely replacing the linear weighted least squares step by a nonlinear approach, such as the quasilinearization method presented in <link target-id=""/> (as in the complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR case). This problem illustrates the flexibility in design for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IRLS-based methods.</para>
+    </section>
+    <section id="uid6">
+      <title>Magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR design</title>
+      <para id="id2254507">The previous sections present algorithms that are based on complex specifications; that is, the user must specify both desired magnitude and phase responses. In some cases it might be better to specify a desired magnitude response only, while allowing an algorihm to select the phase that optimally minimizes the magnitude error. Note that if an algorithm is given a phase in addition to a magnitude function, it must then make a compromise between approximating both functions. The magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR approximation problem overcomes this dilemma by posing the problem only in terms of a desired magnitude function. The algorithm would then find the optimal phase that provides the optimal magnitude approximation. A mathematical formulation follows,</para>
+      <equation id="uid7">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+              <m:mtext>min</m:mtext>
+              <m:mrow>
+                <m:mi>a</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>b</m:mi>
+              </m:mrow>
+            </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:mspace width="0.277778em"/>
+            <m:msubsup>
+              <m:mfenced separators="" open="∥" close="∥">
+                <m:mspace width="0.277778em"/>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:mi>D</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mfenced>
+                <m:mo>-</m:mo>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>B</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>b</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>A</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>a</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mfrac>
+                </m:mfenced>
+                <m:mspace width="0.277778em"/>
+              </m:mfenced>
+              <m:mi>p</m:mi>
+              <m:mi>p</m:mi>
+            </m:msubsup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <figure id="uid8"><media id="uid8_media" alt="A block diagram for magnitude l_p IIR method. The diagram begining at the top starts with the phrase 'Real D' with an arrow pointing down to a rectangular box containing the phrase 'Frequency Prony'. An arrow points down from that box to a diamond shaped box labeled 'Converged'. An arrow points to the left with 'N' next to it and the arrow is labeled 'Update Phase'. The arrow points up to the first arrow pointing to the box 'Frequency Prony'. Another arrow points down from the 'Converged?' box with the letter 'Y' next to it. The arrow points to the phrase 'Equation L_2 error Magnitude soln.'. Another arrow points down from this phrase to a rectangular box containing the phrase 'Complex L_2 linearization' and another arrow points down from that box to a diamond shaped box containing the phrase 'Converged?'. An arrow points down from the left with 'N' next to it and labeled 'Update Phase'. The arrow points up to the arrow pointing to the box containg 'Complex L_2 linearization'. An arrow points down from the 'Converged?' box down with a 'Y' next to it. The arrow points to the phrase 'Solution L_2 error Magnitude soln.'. An arrow points down from that phrase to the box containing the phrase 'Solve complex L_p as weighted complex L_2 via linearization'. Another arrow points down from this box to another box containing the phrase 'Partial updating' and then another arrow points down to a diamond shaped box containing the phrase 'Converged?'. An arrow with 'N' next to it points up from the 'Converged?' box up to the arrow pointing to the box containing the phrase 'Solve complex L_p as weighted complex L_2 via linearization'. The arrow is labeled 'Update Phase'. The last three boxes and these arrows are all contained in a dashed box labeled 'For a given p solve magnitude L_p problem'. Another arrow points down from the 'Converged?' diamond with a 'Y' next to the arrow to another diamond shaped box labeled 'Desired p?'. There is and arrow pointing up and to the right with an 'N' pointing to the arrow pointing to the box containing the phrase 'Solve complex L_p as weighted complex L_2 via linearization'. This arrow is labeled 'Update p by updating weights'. To the left of the diamond is the letter 'N' and Another arrow points down from the diamond with a 'Y' next to it to an oval box containing the phrase 'End'.   ">
+          <image mime-type="image/png" src="../../media/iir_lpmag.png" id="uid8_onlineimage" width="863" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 863. --></image>
+         </media>
+        
+      <caption>Block diagram for magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR method.</caption></figure>
+      <para id="id2254923">A critical idea behind the magnitude approach is to allow the algorithm to find the optimum phase for a magnitude approximation. It is important to recognize that the optimal magnitude filter indeed has a complex frequency response. Atmadji Soewito <link target-id="bid1"/> published in 1990 a theorem in the context of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> IIR design that demonstrated that the phase corresponding to an optimal magnitude approximation could be found iteratively by <emphasis effect="bold">updating</emphasis> the <emphasis effect="italics">desired phase</emphasis> in a complex approximation scenario. In other words, given a desired complex response <m:math overflow="scroll"><m:msub><m:mi>D</m:mi><m:mn>0</m:mn></m:msub></m:math> one can solve a complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> problem and take the resulting phase to form a new desired response <m:math overflow="scroll"><m:msup><m:mi>D</m:mi><m:mo>+</m:mo></m:msup></m:math> from the original desired magnitude response with the new phase. That is,</para>
+      <equation id="id2255010">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:msub>
+                <m:mi>D</m:mi>
+                <m:mn>0</m:mn>
+              </m:msub>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:msub>
+                  <m:mi>φ</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2255063">where <m:math overflow="scroll"><m:msub><m:mi>D</m:mi><m:mn>0</m:mn></m:msub></m:math> represents the original desired magnitude response and <m:math overflow="scroll"><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:msub><m:mi>φ</m:mi><m:mi>i</m:mi></m:msub></m:mrow></m:msup></m:math> is the resulting phase from the previous iteration. This approach was independently suggested <link target-id="bid2"/> by Leland Jackson and Stephen Kay in 2008.</para>
+      <para id="id2255112">This work introduces an algorithm to solve the magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR problem by combining the IRLS-based complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR algorithm from <link target-id="uid2"/> with the phase updating ideas from Soewito, Jackson and Kay. The resulting algorithm is robust, efficient and flexible, allowing for different orders in the numerator and denominator as well as even or uneven sampling in frequency space, plus the optional use of specified transition bands. A block diagram for this method is presented in <link target-id="uid8"/>.</para>
+      <para id="id2255160">The overall <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR magnitude procedure can be summarized as follows,</para>
+      <list id="id2255178" display="block" list-type="enumerated">
+        <item id="uid9">Experimental analysis demonstrated that a reasonable initial solution for each of the three main stages would allow for faster convergence. It was found that the frequency domain Prony method by Burrus <link target-id="bid3"/> (presented in <link target-id=""/>) offered a good <emphasis effect="italics">initial guess</emphasis>. In <link target-id="uid8"/> this method is iterated to update the specified phase. The outcome of this step would be an <emphasis effect="bold">equation error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> magnitude</emphasis> design.
+</item>
+        <item id="uid10">The equation error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> magnitude solution from the previous step initializes a second stage where one uses quasilinearization to update the desired phase. Quasilinearization solves the true <emphasis effect="italics">solution error</emphasis> complex approximation. Therefore by iterating on the phase one finds at convergence a <emphasis effect="bold">solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> magnitude</emphasis> design.
+</item>
+        <item id="uid11">The rest of the algorithm follows the same idea as in the previous step, except that the least squared step becomes a <emphasis effect="italics">weighted</emphasis> one (to account for the necessary <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> homotopy weighting). It is also crucial to include the partial updating introduced in <link target-id=""/>. By iterating on the weights one would find a <emphasis effect="bold">solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> magnitude</emphasis> design.
+</item>
+      </list>
+      <para id="id2255348">Figures <link target-id="uid12"/> through <link target-id="uid16"/> illustrate the effectiveness of this algorithm at each of the three different stages for length-5 filters <m:math overflow="scroll"><m:mi>a</m:mi></m:math> and <m:math overflow="scroll"><m:mi>b</m:mi></m:math>, with transition edge frequencies of 0.2 and 0.24 (in normalized frequency) and <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>30</m:mn></m:mrow></m:math>. A linear transition band was specified. Figures <link target-id="uid12"/>, <link target-id="uid12"/> and <link target-id="uid12"/> show the equation error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math>, solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math>. <link target-id="uid15"/> shows a comparison of the magnitude error functions for the solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> designs. <link target-id="uid16"/> shows the phase responses for the three designs.</para>
+      <figure id="uid12"><media id="uid12_media" alt="This image contains two graphs. The first graph is a representation of the 'Equation Error L_2 Magnitude'. There is one wave form. It is identified by a solid red line and labeled 'ε_e L_2 solution'. The desired function is indicated with a blue dotted line. The wave form starts at (0,1) and then at about (0.2,0) the wave has its largest peak before falling drastically to about (0.25,0). The wave then continues along the x-axis till (.5,0) where the graph ends. The dotted blue line runs along y=1 to (.2,1). Then the dotted blue line continues at y=0 from (0.25,0) to (0.5,0). The second graph is a representation of 'Equation Error L_2 Phase'. There is a single wave form in the graph represented by a solid red line. The wave starts at (0,0) drops slightly then rises to (0.5,6).">
+          <image mime-type="image/png" src="../../media/lpiirmag1.png" id="uid12_onlineimage" width="560" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 560. --></image>
+           </media>
+        
+      <caption>Equation error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> magnitude design.</caption></figure>
+      <figure id="uid13"><media id="uid13_media" alt="This image contains two graphs. The first graph is a representation of the 'Solution Error L_2 Magnitude'. There is one wave form. It is identified by a solid red line and labeled 'ε_s L_2 solution'. The desired function is indicated with a blue dotted line. The wave form starts at (0,1) and then at about (0.2,0) the wave has its largest peak before falling drastically to about (0.25,0). The wave then continues along the x-axis till (.5,0) where the graph ends. The dotted blue line runs along y=1 to (.2,1). Then the dotted blue line continues at y=0 from (0.25,0) to (0.5,0). The second graph is a representation of 'Solution Error L_2 Phase'. There is a single wave form in the graph represented by a solid red line. The wave starts at (0,0) drops slightly then rises to (0.5,6).">
+          <image mime-type="image/png" src="../../media/lpiirmag2.png" id="uid13_onlineimage" width="560" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 560. --></image>
+        </media>
+        
+      <caption>Solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> magnitude design.</caption></figure>
+      <figure id="uid14"><media id="uid14_media" alt="This image contains two graphs. The first graph is a representation of the 'Solution Error L_p Magnitude'. There is one wave form. It is identified by a solid red line and labeled 'ε_s L_p solution'. The desired function is indicated with a blue dotted line. The wave form starts at (0,1) and then at about (0.2,0) the wave has its largest peak before falling drastically to about (0.25,0). The wave then continues along the x-axis till (.5,0) where the graph ends. The dotted blue line runs along y=1 to (.2,1). Then the dotted blue line continues at y=0 from (0.25,0) to (0.5,0). The second graph is a representation of 'Solution Error L_p Phase'. There is a single wave form in the graph represented by a solid red line. The wave starts at (0,0) drops slightly then rises to (0.5,6).">
+          <image mime-type="image/png" src="../../media/lpiirmag3.png" id="uid14_onlineimage" width="560" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 560. --></image>
+         </media>
+        
+      <caption>Solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> magnitude design.</caption></figure>
+      <figure id="uid15"><media id="uid15_media" alt="This graph is a representation of 'L_2 versus L_p Magnitude Error'. There are two wave forms represented on this graph. One is labeled 'L_2 Error' and is represented by a blue dashed line. The other wave is labeled 'L_p Error' and is represented by a solid red line. The wave form represented by the dashed blue line starts on the left at (0,0.01) and then the wave peaks three times before rising to a drastic peak at (0.25,0.1). The wave then drops back to (0.26,0.01) rises to (0.3,0.03) drops to (0.4,0.005) and then exits the graph at (0.5,0.02). The other wave starts on the left at (0,0.04) drops to (0.05,0). There are two more peaks and the the wave flatlines along the x-axis from (0.2,0) to (0.24,0). The wave then rises to (0.25,0.05). The wave then drops to (0.26,0.01) rises to (0.28,0.05) drops to (0.35,0.02) and then exits the graph at (0.5,0.045).">
+          <image mime-type="image/png" src="../../media/lpiirmag4.png" id="uid15_onlineimage" width="570" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 570. --></image>
+         </media>
+        
+      <caption>Comparison of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR magnitude designs</caption></figure>
+      <figure id="uid16"><media id="uid16_media" alt="This is a graph of 'Phase Comparison'. There are three phase responses. One is labeled 'ε_e L_2 Phase' and is identified by a line of black dots. Another is labeled 'ε_s L_2 Phase' identified by a blue dashed line. The final phase is labeled 'L_p Phase' and identified with a solide red line. All three phases follow the same general path. All start at (0,0) drop to about (0.15,-1) then  at this point the lines split apart. The red line is highest on the y axis and furtherest  left on the x axis. The black dotted line is lowest on the y axis and furtherest right on the x axis. The blue dashed line is in the middle of these two lines. All three lines exit the graph at about (0.5,6). ">
+          <image mime-type="image/png" src="../../media/lpiirmag5.png" id="uid16_onlineimage" width="570" print-width="3in"><!-- NOTE: attribute width changes image size online (pixels). original width is 570. --></image>
+          </media>
+        
+      <caption>Phase responses for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR magnitude designs.</caption></figure>
+      <para id="id2255657">From Figures <link target-id="uid15"/> and <link target-id="uid16"/> one can see that the algorithm has changed the phase response in a way that makes the maximum magnitude error (located in the stopband edge frequency) to be reduced by approximately half its value. Furthermore, <link target-id="uid15"/> demonstrates that one can reach quasiequiripple behavior with relatively low values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> (for the examples shown, <m:math overflow="scroll"><m:mi>p</m:mi></m:math> was set to 30).</para>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid2">
+      <bib:article>
+<!--required fields-->
+        <bib:author>Jackson, Leland B.</bib:author>
+        <bib:title>Frequency-Domain Steiglitz-McBride Method for Least-Squares IIR Filter Design, ARMA Modeling, and Periodogram Smoothing</bib:title>
+        <bib:journal>IEEE Signal Processing Letters</bib:journal>
+        <bib:year>2008</bib:year>
+<!--optional fields-->
+        <bib:volume>15</bib:volume>
+        <bib:number/>
+        <bib:pages>49-52</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid3">
+      <bib:book>
+<!--required fields-->
+        <bib:author>Parks, T. W. and Burrus, C. S.</bib:author>
+        <bib:title>Digital Filter Design</bib:title>
+        <bib:publisher>John Wiley and Sons</bib:publisher>
+        <bib:year>1987</bib:year>
+<!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid1">
+      <bib:phdthesis>
+<!--required fields-->
+        <bib:author>Soewito, Atmadji W.</bib:author>
+        <bib:title>Least Square Digital Filter Design in the Frequency Domain</bib:title>
+        <bib:school>Rice University</bib:school>
+        <bib:year>1990</bib:year>
+<!--optional fields-->
+        <bib:type>Ph. D. Thesis</bib:type>
+        <bib:address/>
+        <bib:month>December</bib:month>
+        <bib:note/>
+      </bib:phdthesis>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:inproceedings>
+<!--required fields-->
+        <bib:author>Vargas, Ricardo A. and Burrus, Charles S.</bib:author>
+        <bib:title>On the Design of <!--no math allowed in bib entries--> IIR Filters with Arbitrary Frequency Bands</bib:title>
+        <bib:booktitle>Proc. ICASSP</bib:booktitle>
+        <bib:year>2001</bib:year>
+<!--optional fields-->
+        <bib:editor/>
+        <bib:volume>6</bib:volume>
+        <bib:series/>
+        <bib:pages>3829-3832</bib:pages>
+        <bib:address/>
+        <bib:month/>
+        <bib:organization/>
+        <bib:publisher/>
+        <bib:note/>
+      </bib:inproceedings>
+    </bib:entry>
+  </bib:file>
+</document>

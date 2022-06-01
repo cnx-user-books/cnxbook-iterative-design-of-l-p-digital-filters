@@ -1,0 +1,32 @@
+<col:collection xmlns="http://cnx.rice.edu/collxml" xmlns:col="http://cnx.rice.edu/collxml" xml:lang="en">
+  <metadata xmlns:md="http://cnx.rice.edu/mdml" mdml-version="0.5">
+    <md:content-id>col11383</md:content-id>
+    <md:title>Iterative Design of l_p Digital Filters</md:title>
+    <md:language>en</md:language>
+    <md:license url="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</md:license>
+    <md:uuid>532858ad-4b1e-4875-8770-8b91e411e18b</md:uuid>
+<md:slug>iterative-design-of-l-p-digital-filters</md:slug>
+</metadata>
+  <col:content>
+    <col:module document="m34395"/>
+    <col:module document="m34397"/>
+    <col:module document="m41667"/>
+    <col:module document="m41668"/>
+    <col:module document="m41669"/>
+    <col:module document="m41670"/>
+    <col:module document="m41671"/>
+    <col:module document="m41675"/>
+    <col:module document="m41676"/>
+    <col:module document="m41677"/>
+    <col:module document="m41678"/>
+    <col:module document="m41679"/>
+    <col:module document="m41680"/>
+    <col:module document="m41681"/>
+    <col:module document="m41683"/>
+    <col:module document="m41684"/>
+    <col:module document="m41687"/>
+    <col:module document="m41689"/>
+    <col:module document="m41690"/>
+    <col:module document="m41692"/>
+  </col:content>
+</col:collection>

@@ -1,0 +1,891 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Constrained Least Squares (CLS) problem</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41678</md:content-id>
+  <md:title>Constrained Least Squares (CLS) problem</md:title>
+  <md:abstract/>
+  <md:uuid>e0270986-7746-4f39-95a2-0cfc275540c7</md:uuid>
+</metadata>
+
+<content>
+    <para id="id2253177">One of the common obstacles to innovation occurs when knowledge settles on a particular way of dealing with problems. While new ideas keep appearing suggesting innovative approaches to design digital filters, it is all too common in practice that <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> dominate error criteria specifications. This section is devoted to exploring a different way of thinking about digital filters. It is important to note that up to this point we are not discussing an algorithm yet. The main concern being brought into play here is the specification (or description) of the design problem. Once the <emphasis effect="italics">Constrained Least Squares</emphasis> (CLS) problem formulation is introduced, we will present an IRLS implementation to solve it, and will justify our approach over other existing approaches. It is the author's belief that under general conditions one should always use our IRLS implementation over other methods, especially when considering the associated management of transition regions.</para>
+    <para id="id2253859">The CLS problem was introduced in <link target-id=""/> and is repeated here for clarity,</para>
+    <equation id="uid1"><m:math overflow="scroll" mode="display">
+        <m:mtable>
+          <m:mtr>
+            <m:mtd columnalign="left">
+              <m:munder>
+<m:mrow>
+                <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+        <m:mi>h</m:mi>
+</m:mrow>   
+           </m:munder>
+            </m:mtd>
+            <m:mtd columnalign="left">
+              <m:msub>
+                <m:mrow>
+                  <m:mo>∥</m:mo>
+                  <m:mi>D</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>;</m:mo>
+                    <m:mi>h</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>∥</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msub>
+            </m:mtd>
+          </m:mtr>
+          <m:mtr>
+            <m:mtd columnalign="left">
+              <m:mrow>
+                <m:mtext>subject</m:mtext>
+                <m:mspace width="4.pt"/>
+                <m:mtext>to</m:mtext>
+              </m:mrow>
+            </m:mtd>
+            <m:mtd columnalign="left">
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>D</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>H</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>;</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>)</m:mo>
+                <m:mo>|</m:mo>
+                <m:mspace width="-0.166667em"/>
+                <m:mo>≤</m:mo>
+                <m:mspace width="-0.166667em"/>
+                <m:mi>τ</m:mi>
+              </m:mrow>
+            </m:mtd>
+          </m:mtr>
+        </m:mtable>
+      </m:math>
+    </equation>
+    <para id="id2254232">To the best of our knowledge this problem was first introduced in the context of filter design by John Adams <link target-id="bid0"/> in 1991. The main idea consists in approximating iteratively a desired frequency response in a least squares sense except in the event that any frequency exhibits an error larger than a specified tolerance <m:math overflow="scroll"><m:mi>τ</m:mi></m:math>. At each iteration the problem is adjusted in order to reduce the error on offending frequencies (i.e. those which do not meet the constraint specifications). Ideally, convergence is reached when the <emphasis effect="italics">altered</emphasis> least squares problem has a frequency response whose error does not exceed constraint specifications. As will be shown below, this goal might not be attained depending on how the problem is posed.</para>
+    <para id="id2254269">Adams and some collaborators have worked in this problem and several variations <link target-id="bid1"/>. However his main (and original) problem was illustrated in <link target-id="bid0"/> with the following important assumption: <emphasis effect="italics">the definition of a desired frequency response must include a fixed non-zero width transition band</emphasis>. His method uses Lagrange multiplier theory and alternation methods to find frequencies that exceed constraints and minimize the error at such locations, with an overall least squares error criterion.</para>
+    <para id="id2254295">Burrus, Selesnick and Lang <link target-id="bid2"/> looked at this problem from a similar perspective, but relaxed the design specifications so that only a <emphasis effect="italics">transition frequency</emphasis> needs to be specified. The actual transition band does indeed exist, and it centers itself around the specified transition frequency; its width adjusts as the algorithm iterates (constraint tolerances are still specified). Their solution method is similar to Adams' approach, and explicitly uses the Karush-Kuhn-Tucker (KKT) conditions together with an alternation method to minimize the least squares error while constraining the maximum error to meet specifications.</para>
+    <para id="id2254320">C. S. Burrus and the author of this work have been working on the CLS problem using IRLS methods with positive results. This document is the first thorough presentation of the method, contributions, results and code for this approach, and constitutes one of the main contributions of this work. It is crucial to note that there are two separate issues in this problem: on one hand there is the matter of the actual problem formulation, mainly depending on whether a transition band is specified or not; on the other hand there is the question of how the selected problem description is actually met (what algorithm is used). Our approach follows the problem description by Burrus et al. shown in <link target-id="bid2"/> with an IRLS implementation.</para>
+    <section id="uid2">
+      <title>Two problem formulations</title>
+      <para id="id2254350">As mentioned in <link target-id=""/>, one can address problem <link target-id="uid1"/> in two ways depending on how one views the role of the transition band in a CLS problem. The original problem posed by Adams in <link target-id="bid0"/> can be written as follows,</para>
+      <equation id="uid3"><m:math overflow="scroll" mode="display">
+          <m:mtable>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:munder>
+<m:mrow>
+                  <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+          <m:mi>h</m:mi>
+</m:mrow>        
+        </m:munder>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:msub>
+                  <m:mrow>
+                    <m:mo>∥</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>h</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>∥</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msub>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mtext>subject</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>to</m:mtext>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mrow>
+                    <m:mo>|</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>h</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>|</m:mo>
+                  </m:mrow>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mo>≤</m:mo>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mi>τ</m:mi>
+                  <m:mspace width="1.em"/>
+                  <m:mo>∀</m:mo>
+                  <m:mspace width="0.277778em"/>
+                  <m:mi>ω</m:mi>
+                  <m:mo>∈</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>p</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                  <m:mo>∪</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>,</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2254552">where <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>π</m:mi></m:mrow></m:math>. From a traditional standpoint this formulation feels familiar. It assigns <emphasis effect="bold">fixed frequencies</emphasis> to the transition band edges as a number of filter design techniques do. As it turns out, however, one might not want to do this in CLS design.</para>
+      <para id="id2254625">An alternate formulation to <link target-id="uid3"/> could implicitly introduce a <emphasis effect="italics">transition</emphasis> frequency <m:math overflow="scroll"><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>t</m:mi><m:mi>b</m:mi></m:mrow></m:msub></m:math> (where <m:math overflow="scroll"><m:mrow><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>t</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub></m:mrow></m:math>); the user only specifies <m:math overflow="scroll"><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>t</m:mi><m:mi>b</m:mi></m:mrow></m:msub></m:math>. Consider</para>
+      <equation id="uid4"><m:math overflow="scroll" mode="display">
+          <m:mtable>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:munder>
+<m:mrow>
+                  <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+          <m:mi>h</m:mi>
+</m:mrow>        
+        </m:munder>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:msub>
+                  <m:mrow>
+                    <m:mo>∥</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>h</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>∥</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msub>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mo>∀</m:mo>
+                  <m:mspace width="0.277778em"/>
+                  <m:mi>ω</m:mi>
+                  <m:mo>∈</m:mo>
+                  <m:mo>[</m:mo>
+                  <m:mn>0</m:mn>
+                  <m:mo>,</m:mo>
+                  <m:mi>π</m:mi>
+                  <m:mo>]</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mtext>subject</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>to</m:mtext>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>D</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>;</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>|</m:mo>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mo>≤</m:mo>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mi>τ</m:mi>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mo>∀</m:mo>
+                  <m:mspace width="0.277778em"/>
+                  <m:mi>ω</m:mi>
+                  <m:mo>∈</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>p</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                  <m:mo>∪</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>,</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2254932">The algorithm at each iteration generates an <emphasis effect="italics">induced transition band</emphasis> in order to satisfy the constraints in <link target-id="uid4"/>. Therefore <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>}</m:mo></m:mrow></m:math> vary at each iteration.</para>
+      <figure id="uid5"><media id="uid5_media" alt="Two graphs showing two formulations for Constrained Least Squares Problems.">
+          <image mime-type="image/png" src="../../media/cls_filters1.png" id="uid5_onlineimage" width="610" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 610. --></image>
+          </media>
+        
+      <caption>Two formulations for Constrained Least Squares problems.</caption></figure>
+      <para id="id2254998">It is critical to point out the differences between <link target-id="uid3"/> and <link target-id="uid4"/>. <link target-id="uid5"/>.a explains Adams' CLS formulation, where the desired filter response is only specified at the fixed pass and stop bands. At any iteration, Adams' method attempts to minimize the least squares error (<m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mn>2</m:mn></m:msub></m:math>) at both bands while trying to satisfy the constraint <m:math overflow="scroll"><m:mi>τ</m:mi></m:math>. Note that one could think of the constraint requirements in terms of the Chebishev error <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>∞</m:mi></m:msub></m:math> by writing <link target-id="uid3"/> as follows,</para>
+      <equation id="id2255061"><m:math overflow="scroll" mode="display">
+          <m:mtable>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:munder>
+<m:mrow>
+                  <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+          <m:mi>h</m:mi>
+</m:mrow>        
+        </m:munder>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:msub>
+                  <m:mrow>
+                    <m:mo>∥</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>h</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>∥</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msub>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mtext>subject</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>to</m:mtext>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mrow>
+                      <m:mo>∥</m:mo>
+                      <m:mi>D</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>H</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>;</m:mo>
+                        <m:mi>h</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>∥</m:mo>
+                    </m:mrow>
+                    <m:mi>∞</m:mi>
+                  </m:msub>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mo>≤</m:mo>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mi>τ</m:mi>
+                  <m:mspace width="1.em"/>
+                  <m:mo>∀</m:mo>
+                  <m:mspace width="0.277778em"/>
+                  <m:mi>ω</m:mi>
+                  <m:mo>∈</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>p</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                  <m:mo>∪</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>,</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2255243">In contrast, <link target-id="uid5"/>.b illustrates our proposed problem <link target-id="uid4"/>. The idea is to minimize the least squared error <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mn>2</m:mn></m:msub></m:math> across <emphasis effect="bold">all</emphasis> frequencies while
+ensuring that constraints are met in an intelligent manner. At this point one can think of the interval <m:math overflow="scroll"><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:math> as an <emphasis effect="italics">induced</emphasis> transition band, useful for the purposes of constraining the filter. <link target-id="uid8"/> presents the actual algorithms that solve <link target-id="uid4"/>, including the process of finding <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>}</m:mo></m:mrow></m:math>.</para>
+      <para id="id2255366">It is important to note an interesting behavior of transition bands and extrema points in <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filters. <link target-id="uid6"/> shows <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> length-15 linear phase filters (designed using Matlab's <code display="inline">firls</code> and <code display="inline">firpm</code> functions); the transition band was specified at <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>4</m:mn><m:mo>/</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>s</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo>/</m:mo><m:mi>π</m:mi><m:mo>}</m:mo></m:mrow></m:math>. The dotted <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> filter illustrates an important behavior of least squares filters: typically the maximum error of an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> filter is located at the transition band. The solid <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filter shows why minimax filters are important: despite their larger error across most of the bands, the filter shows the same maximum error at all extrema points, including the transition band edge frequencies. In a CLS problem then, typically an algorithm will attempt to reduce iteratively the maximum error (usually located around the transition band) of a series of least squares filters.</para>
+      <figure id="uid6"><media id="uid6_media" alt="A graph consisting of two waveforms one is identified by a solid line and labeled L_∞. The other is identified by a dotted line and labeled L_2. The x-axis is labeled ω/π and the y-axis is labeled |H(ω)|. Both waveforms follow the same general path starting on the left high on the y-axis and dropping drastically to 0 on the y axis and bouncing along the x axis to the end of the graph. ">
+          <image mime-type="image/png" src="../../media/l2_linf_filter.png" id="uid6_onlineimage" width="453" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 453. --></image>
+          </media>
+        
+      <caption>Comparison of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filters.</caption></figure>
+      <para id="id2255598">Another important fact results from the relationship between the transition band width and the resulting error amplitude in <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filters. <link target-id="uid7"/> shows two <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> designs; the transition bands were set at <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>4</m:mn><m:mo>/</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo>/</m:mo><m:mi>π</m:mi><m:mo>}</m:mo></m:mrow></m:math> for the solid line design, and at <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>4</m:mn><m:mo>/</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>6</m:mn><m:mo>/</m:mo><m:mi>π</m:mi><m:mo>}</m:mo></m:mrow></m:math> for the dotted line one. One can see that by widening the transition band a decrease in error ripple amplitude is induced.</para>
+      <figure id="uid7"><media id="uid7_media" alt="This graph contains two waveforms. One wave is identified by a thin solid line and the other is identified by a dotted line. The x-axis is labeled ω/π and the y-axis is labeled |H(ω)|. Both wave forms follow the same general path. They start high on the y-axis and proceed to the right. The waves drop drastically to the x-axis and bounce along the x-axis until the end of the graph. The upper portion of the waves are bound vertically by two sets of horizontal line. Solid line has a greated amplitude and contained within these bounds are two dotted lines which mark the bounds of the dotted line. The dotted line has a smaller amplitude. After the drastic descent, the upper bound of the solid line wave is marked by a solid line. The dotted line wave's upper bound is marked by a horizontal dotted line. The amplitude of the solid line is greater than the dotted line.   ">
+          <image mime-type="image/png" src="../../media/linf_linf_filter.png" id="uid7_onlineimage" width="490" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 490. --></image>
+         </media>
+        
+      <caption>Effects of transition bands in <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filters.</caption></figure>
+      <para id="id2255738">These two results together illustrate the importance of the transition bandwidth for a CLS design. Clearly one can decrease maximum error tolerances by widening the transition band. Yet finding the perfect balance between a transition bandwidth and a given tolerance can prove a difficult task, as will be shown in <link target-id="uid8"/>. Hence the relevance of a CLS method that is not restricted by two types of specifications competing against each other. In principle, one should just determine how much error one can live with, and allow an algorithm to find the optimal transition band that meets such tolerance.</para>
+    </section>
+    <section id="uid8">
+      <title>Two problem solutions</title>
+      <para id="id2255765"><link target-id="uid2"/> introduced some important remarks regarding the behavior of extrema points and transition bands in <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filters. As one increases the constraints on an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> filter, the result is a filter whose frequency response looks more and more like an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filter.</para>
+      <para id="id2255834"><link target-id=""/> introduced the frequency-varying problem and an IRLS-based method to solve it. It was also mentioned that, while the method does not solve the intended problem (but a similar one), it could prove to be useful for the CLS problem. As it turns out, in CLS design one is merely interested in solving an unweighted, constrained least squares problem. In this work, we achieve this by solving a sequence of weighted, unconstrained least squares problems, where the sole role of the weights is to "constraint" the maximum error of the frequency response at each iteration. In other words, one would like to find weights <m:math overflow="scroll"><m:mi>w</m:mi></m:math> such that</para>
+      <equation id="id2255869"><m:math overflow="scroll" mode="display">
+          <m:mtable>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:munder>
+<m:mrow>
+                  <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+          <m:mi>h</m:mi>
+</m:mrow>        
+        </m:munder>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:msub>
+                  <m:mrow>
+                    <m:mo>∥</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>h</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>∥</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msub>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mtext>subject</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>to</m:mtext>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mrow>
+                      <m:mo>∥</m:mo>
+                      <m:mi>D</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>H</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>;</m:mo>
+                        <m:mi>h</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>∥</m:mo>
+                    </m:mrow>
+                    <m:mi>∞</m:mi>
+                  </m:msub>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mo>≤</m:mo>
+                  <m:mspace width="-0.166667em"/>
+                  <m:mi>τ</m:mi>
+                  <m:mspace width="1.em"/>
+                  <m:mo>∀</m:mo>
+                  <m:mspace width="0.277778em"/>
+                  <m:mi>ω</m:mi>
+                  <m:mo>∈</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>p</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                  <m:mo>∪</m:mo>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>,</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2256059">is equivalent to</para>
+      <equation id="id2256064"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msub>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>w</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>D</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>;</m:mo>
+                    <m:mi>h</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mn>2</m:mn>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256145">Hence one can revisit the frequency-varying design method and use it to solve the CLS problem. Assuming that one can reasonably approximate <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> by using high values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math>, at each iteration the main idea is to use an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> weighting function only at frequencies where the constraints are exceeded. A formal formulation of this statement is</para>
+      <equation id="id2256195">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>w</m:mi>
+            <m:mfenced separators="" open="(" close=")">
+              <m:mi>ϵ</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mfenced>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="{" close="">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:msup>
+                      <m:mrow>
+                        <m:mo>|</m:mo>
+                        <m:mi>ϵ</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mo>|</m:mo>
+                      </m:mrow>
+                      <m:mfrac>
+                        <m:mrow>
+                          <m:mi>p</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>2</m:mn>
+                        </m:mrow>
+                        <m:mn>2</m:mn>
+                      </m:mfrac>
+                    </m:msup>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mtext>if</m:mtext>
+                      <m:mspace width="4.pt"/>
+                      <m:mrow>
+                        <m:mo>|</m:mo>
+                        <m:mi>ϵ</m:mi>
+                        <m:mo>(</m:mo>
+                        <m:mi>ω</m:mi>
+                        <m:mo>)</m:mo>
+                        <m:mo>|</m:mo>
+                        <m:mspace width="-0.166667em"/>
+                        <m:mo>&gt;</m:mo>
+                        <m:mspace width="-0.166667em"/>
+                        <m:mi>τ</m:mi>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mn>1</m:mn>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mtext>otherwise</m:mtext>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256317">Assuming a suitable weighting function existed such that the specified tolerances are related to the frequency response constraints, the IRLS method would iterate and assign rather large weights to frequencies exceeding the constraints, while inactive frequencies get a weight of one. As the method iterates, frequencies with large errors move the response closer to the desired tolerance. Ideally, all the active constraint frequencies would eventually meet the constraints. Therefore the task becomes to find a suitable weighting function that <emphasis effect="italics">penalizes</emphasis> large errors in order to have all the frequencies satisfying the constraints; once this condition is met, we have reached the desired solution.</para>
+      <figure id="uid9"><media id="uid9_media" alt="This image contains three graphs. The first graph represents Polynomial weighting (p=100). The second graph represents Linear-log view (p=100), and the third graph represents Linear-log view (p=500). The x-axis is labeled ε for all of these graphs, and the y-axis is labeled w(ε).">
+          <image mime-type="image/png" src="../../media/poly_weights.png" id="uid9_onlineimage" width="681" print-width="6in"/>
+        </media>
+        
+      <caption>CLS polynomial weighting function.</caption></figure>
+      <para id="id2256351">One proposed way to find adequate weights to meet constraints is given by a <emphasis effect="italics">polynomial weighting function</emphasis> of the form</para>
+      <equation id="id2256362">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>w</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mn>1</m:mn>
+            <m:mo>+</m:mo>
+            <m:msup>
+              <m:mfenced separators="" open="|" close="|">
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>ϵ</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mi>τ</m:mi>
+                </m:mfrac>
+              </m:mfenced>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>p</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>2</m:mn>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:mfrac>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256427">where <m:math overflow="scroll"><m:mi>τ</m:mi></m:math> effectively serves as a threshold to determine whether a weight is dominated by either unity or the familiar <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> weighting term. <link target-id="uid9"/> illustrates the behavior of such a curve.</para>
+      <figure id="uid10"><media id="uid10_media" alt="This graph represents L_2 Initial Guess. The x-axis is labeled f and the y-axis is labeled H(f). There is one wave form present in this graph. The waveform starts at the coordinate (0,1) and then drops drastically to (0.25,0) and bounces along y=0 until (0,0.5) where the graph ends.">
+          <image mime-type="image/png" src="../../media/cls_orig_L2.png" id="uid10_onlineimage" width="486" print-width="2.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 486. --></image>
+          
+   
+        </media>
+        
+      <caption>Original <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> guess for CLS algorithm.</caption></figure>
+      <figure id="uid11"><media id="uid11_media" alt="This graph represents CLS Solution (τ=0.06). The x-axis is labeled f and the y-axis is labeled H(f). There is one wave form present in this graph. The waveform starts at the coordinate (0,1) and then drops drastically to (0.25,0) and bounces along y=0 until (0,0.5) where the graph ends.">
+          <image mime-type="image/png" src="../../media/cls_mild_stb.png" id="uid11_onlineimage" width="486" print-width="2.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 486. --></image>
+          </media>
+        
+      <caption>CLS design example using mild constraints.</caption></figure>
+      <figure id="uid12"><media id="uid12_media" alt="This graph represents CLS Solution (τ=0.03). The x-axis is labeled f and the y-axis is labeled H(f). There is one wave form present in this graph. The waveform starts at the coordinate (0,1) and then drops drastically to (0.25,0) and bounces along y=0 until (0,0.5) where the graph ends.">
+          <image mime-type="image/png" src="../../media/cls_hard_stb.png" id="uid12_onlineimage" width="486" print-width="2.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 486. --></image>
+         </media>
+        
+      <caption>CLS design example using tight constraints.</caption></figure>
+      <figure id="uid13"><media id="uid13_media" alt="This image contains three graphs. The upper most graph is labeled L_2 Solution. The middle graph is labeled Intermediate Solution and the bottom graph is labeled CLS Solution. The x and y-axes of all graphs are labeled f and H(f) respectively. The waveforms of all of these graphs are similar. The waveform starts at the coordinate (0,1) and then drops drastically to (0.3,0) and bounces along y=0 until (0,0.5) where the graph ends. The only main difference between the waves is the amplitude of the wave, especially the peaks directly before and after the drastic fall.">
+          <image mime-type="image/png" src="../../media/cls_ntb.png" id="uid13_onlineimage" width="441" print-width="4in"><!-- NOTE: attribute width changes image size online (pixels). original width is 441. --></image>
+               </media>
+        
+      <caption>CLS design example without transition bands.</caption></figure>
+      <para id="id2256536">In practice the method outlined above has proven robust particularly in connection with the specified transition band design. Consider the least squares design in <link target-id="uid10"/> (using a length-21 Type-I linear phase low-pass FIR filter with linear transition frequencies <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>25</m:mn><m:mo>}</m:mo></m:mrow></m:math>). This example illustrates the typical effect of CLS methods over <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> designs; the largest error (in an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> sense) can be located at the edges of the transition band. Figures <link target-id="uid11"/> and <link target-id="uid12"/> illustrate design examples using the proposed approach. <link target-id="uid11"/> shows an example of a mild constraint (<m:math overflow="scroll"><m:mrow><m:mi>τ</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>6</m:mn></m:mrow></m:math>), whereas <link target-id="uid12"/> illustrates an advantage of this method, associated to a hard constraint (<m:math overflow="scroll"><m:mrow><m:mi>τ</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>3</m:mn></m:mrow></m:math>). The method is trying iteratively to reduce the maximum error towards the constraint; however the specified constraint in <link target-id="uid12"/> is such that even at the point where an equiripple response is reached for the specified transition bands the constraint is not met. At this point the method converges to an optimal <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution that approximates equiripple as <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases (the examples provided use <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>50</m:mn></m:mrow></m:math>).</para>
+      <para id="id2256717">A different behavior occurs when no transition bands are defined. Departing from an initial <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> guess (as shown in <link target-id="uid13"/>.a) the proposed IRLS-based CLS algorithm begins weighting frequencies selectively in order to reduce the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> error towards the constraints <m:math overflow="scroll"><m:mi>τ</m:mi></m:math> at each iteration. Eventually an equiripple behavior can be observed if the constraints are too harsh (as in <link target-id="uid13"/>.b). The algorithm will keep weighting until all frequencies meet the constraints (as in <link target-id="uid13"/>.c). The absence of a specified transition band presents some ambiguity in defining valid frequencies for weighting. One cannot (or rather should not) apply weights too close to the transition frequency specified as this would result in an effort by the algorithm to create a steep transition region (which as mentioned previously is counterintuitive to finding an equiripple solution). In a sense, this would mean having two opposite effects working at the same time and the algorithm cannot accommodate both, usually leading to numerical problems.</para>
+      <figure id="uid14"><media id="uid14_media" alt="This is a diagram of a waveform. The wave is a bold line that rises and falls with a dotted line marking the middle of the peaks and troughs. Two black lines mark the upper and lower extremes of this wave. There are three peaks in this diagram with the final peak marked 'Largest Ripple'. The middle section is labeled 'weighting corridor'. The space between the dotted line and solid upper and lower bounds are marked with brackets each labeled α.">
+          <image mime-type="image/png" src="../../media/induced_band1.png" id="uid14_onlineimage" width="432" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 432. --></image>
+         </media>
+        
+      <caption>Definition of <emphasis effect="italics">induced</emphasis> transition band.</caption></figure>
+      <para id="id2256808">In order to avoid these issues, an algorithm can be devised that selects a subset of the sampled frequencies for weighting purposes at each iteration. The idea is to identify the largest ripple per band at each iteration (the ripple associated with the largest error for a given band) and select the frequencies within that band with errors equal or smaller than such ripple error. In this way one avoids weighting frequencies around the transition frequency. This idea is illustrated in <link target-id="uid14"/>.</para>
+      <figure id="uid15"><media id="uid15_media" alt="This image contains to graphs. The upper graph is labeled 'Weights at early iteration', and the lower graph is labeled 'Weight near convergence'. The x and y-axes on both graphs are labeled f and w(f) respectively. The wave forms of both graphs are similar each has peaks along the x-axis at .05, .1, .15, .2, .3,.35, .4 and .45. The amplitude of each of the graphs increase from .05 to .2 and then the amplitudes are mirrored from .3 to.45. The main difference is the height of the amplitude. The upper graph is slightly higher than the bottom graph and the rise of the wave is more gradual than the bottom one.">
+          <image mime-type="image/png" src="../../media/cls_weights.png" id="uid15_onlineimage" width="419" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 419. --></image>
+         </media>
+        
+      <caption>CLS weights.</caption></figure>
+      <para id="id2256838">The previous example is fundamental since it illustrates the relevance of this method: since for a particular transition band the tightest constraint that one can get is given by the equiripple (or minimax) design (as shown in <link target-id="uid2"/>), a problem might arise when specifications are tighter than what the minimax design can meet. Adams found this problem (as reported in <link target-id="bid0"/>); his method breaks under these conditions. The method proposed here overcomes an inadequate constraint and relaxes the transition band to meet the constraint.</para>
+      <para id="id2256861">It is worth noting that the polynomial weighting form works even when no transition bands are specified (this must become evident from <link target-id="uid13"/>.c above). However, the user must be aware of some practical issues related to this approach. <link target-id="uid15"/> shows a typical CLS polynomial weighting function. Its "spiky" character becomes more dramatic as <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases (the method still follows the homotopy and partial updating ideas from previous sections) as shown in <link target-id="uid15"/>.b. It must be evident that the algorithm will assign heavy weights to frequencies with large errors, but at <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases the difference in weighting exaggerates. At some point the user must make sure that proper sampling is done to ensure that frequencies with large weights (from a theoretical perspective) are being included in the problem, without compromising conputational efficiency (by means of massive oversampling, which can lead to ill-conditioning in numerical least squares methods). Also as <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases, the range of frequencies with signifficantly large weights becomes narrower, thus reducing the overall weighting effect and affecting convergence speed.</para>
+      <figure id="uid16"><media id="uid16_media" alt="A diagram of a CLS envelope weighting function. The diagram three main components. There are two horizontal dotted lines in the middle of the wave. The upper line is labeled 1|τ and the lower line is labeled | τ. The peaks and troughs of the wave are marked by rectangle caps that are labeled Weighted Frequencies. ">
+          <image mime-type="image/png" src="../../media/env_weights.png" id="uid16_onlineimage" width="432" print-width="3in"><!-- NOTE: attribute width changes image size online (pixels). original width is 432. --></image>
+              </media>
+        
+      <caption>CLS envelope weighting function.</caption></figure>
+      <para id="id2256939">A second weighting form can be defined where envelopes are used. The <emphasis effect="italics">envelope weighting function</emphasis> approach works by assigning a weight to all frequencies not meeting a constraint. The value of such weights are assigned as flat intervals as illustrated in <link target-id="uid16"/>. Intervals are determined by the edge frequencies within neighborhoods around peak error frequencies for which constraints are not met. Clearly these neighborhoods could change at each iteration. The weight of the <m:math overflow="scroll"><m:mi>k</m:mi></m:math>-th interval is still determined by our typical expression,</para>
+      <equation id="id2256971">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>w</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>ϵ</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msubsup>
+                    <m:mi>ω</m:mi>
+                    <m:mi>k</m:mi>
+                    <m:mo>+</m:mo>
+                  </m:msubsup>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>p</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>2</m:mn>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:mfrac>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2257038">where <m:math overflow="scroll"><m:msubsup><m:mi>ω</m:mi><m:mi>k</m:mi><m:mo>+</m:mo></m:msubsup></m:math> is the frequency with largest error within the <m:math overflow="scroll"><m:mi>k</m:mi></m:math>-th interval.</para>
+      <para id="id2257071">Envelope weighting has been applied in practice with good results. It is particularly effective at reaching high values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> without ill-conditioning, allowing for a true alternative to minimax design. <link target-id="uid17"/> shows an example using <m:math overflow="scroll"><m:mrow><m:mi>τ</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>4</m:mn></m:mrow></m:math>; the algorithm managed to find a solution for <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>500</m:mn></m:mrow></m:math>. By specifying transition bands and unachievable constraints one can produce an almost equiripple solution in an efficient manner, with the added flexibility that milder constraints will result in CLS designs.</para>
+      <figure id="uid17"><media id="uid17_media" alt="This images contains two graphs. The first graph is labeled CLS Envelope Solution and the second graph is labeled Envelope Weights. The x-axes are labeled for both graphs. The y-axis of the first graph is labeled H(f) and the y-axis is labeled w(f) for the second graph. The Wave form of the first graph starts at (0,1) and progresses horizontally till (0.2,1) where the wave drops drastically to (.25,0) and then continues horizontally to (0.5,0). The second graph consist of a series of short horizontal line segments.">
+          <image mime-type="image/png" src="../../media/cls_env_stb.png" id="uid17_onlineimage" width="419" print-width="3in"><!-- NOTE: attribute width changes image size online (pixels). original width is 419. --></image>
+          </media><caption>CLS design example using envelope weights.</caption></figure>
+    </section>
+    <section id="uid18">
+      <title>Comparison with <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem</title>
+      <para id="id2257169">This chapter presented two problems with similar effects. On one hand, <link target-id=""/> illustrated the fact (see <link target-id=""/>) that as <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases towards infinity, an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> filter will approximate an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> one. On the other hand, <link target-id=""/> presented the constrained least squared problem, and introduced IRLS-based algorithms that produce filters that approximate equiripple behavior as the constraint specifications tighten.</para>
+      <para id="id2257224">A natural question arises: how do these methods compare with each other? In principle it should be possible to compare their performances, as long as the necessary assumptions about the problem to be solved are compatible in both methods. <link target-id="uid22"/> shows a comparison of these algorithms with the following specifications:</para>
+      <list id="id2257237" display="block" list-type="bulleted">
+        <item id="uid19">Both methods designed length-21 Type-I lowpass linear phase digital filters with fixed transition bands defined by <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mo>=</m:mo><m:mo>{</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>24</m:mn><m:mo>}</m:mo></m:mrow></m:math> (in normalized linear frequency).
+</item>
+        <item id="uid20">The <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> experiment used the following values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math>:
+<equation id="id2257323"><m:math overflow="scroll" mode="display"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mo>{</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo>,</m:mo><m:mn>3</m:mn><m:mo>,</m:mo><m:mn>4</m:mn><m:mo>,</m:mo><m:mn>5</m:mn><m:mo>,</m:mo><m:mn>7</m:mn><m:mo>,</m:mo><m:mn>10</m:mn><m:mo>,</m:mo><m:mn>15</m:mn><m:mo>,</m:mo><m:mn>20</m:mn><m:mo>,</m:mo><m:mn>30</m:mn><m:mo>,</m:mo><m:mn>50</m:mn><m:mo>,</m:mo><m:mn>70</m:mn><m:mo>,</m:mo><m:mn>100</m:mn><m:mo>,</m:mo><m:mn>170</m:mn><m:mo>,</m:mo><m:mn>400</m:mn><m:mo>}</m:mo></m:mrow></m:math></equation></item>
+        <item id="uid21">The CLS experiment used the polynomial weighting method with fixed transition bands and a value of <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>60</m:mn></m:mrow></m:math>. The error tolerances were
+<equation id="id2257446"><m:math overflow="scroll" mode="display"><m:mrow><m:mi>τ</m:mi><m:mo>=</m:mo><m:mo>{</m:mo><m:mo>.</m:mo><m:mn>06</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>077</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>078</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>8</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>084</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>088</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>093</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>11</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>12</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>13</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>14</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>15</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>16</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>17</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mn>18</m:mn><m:mo>}</m:mo></m:mrow></m:math></equation></item>
+      </list>
+      <para id="id2257566">Some conclusions can be derived from <link target-id="uid22"/>. Even though at the extremes of the curves they both seem to meet, the CLS curve lies just below the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> curve for most values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> and <m:math overflow="scroll"><m:mi>τ</m:mi></m:math>. These two facts should be expected: on one hand, in principle the CLS algorithm gives an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> filter if the constraints are so mild that they are not active for any frequency after the first iteration (hence the two curves should match around <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>2</m:mn></m:mrow></m:math>). On the other hand, once the constraints become too harsh, the fixed transition band CLS method basically should design an equiripple filter, as only the active constraint frequencies are <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math>-weighted (this effects is more noticeable with higher values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math>). Therefore for tight constraints the CLS filter should approximate an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filter.</para>
+      <para id="id2257686">The reason why the CLS curve lies under the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> curve is because for a given error tolerance (which could be interpreted as <emphasis effect="italics">for a given minimax error</emphasis><space count="1"/> <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>∞</m:mi></m:msub></m:math>) the CLS method finds the optimal <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> filter. An <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> filter is optimal in an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> sense; it is not meant to be optimal in either the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> or <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> senses. Hence for a given <m:math overflow="scroll"><m:mi>τ</m:mi></m:math> it cannot beat the CLS filter in an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> sense (it can only match it, which happens around <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>2</m:mn></m:mrow></m:math> or <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mi>∞</m:mi></m:mrow></m:math>).</para>
+      <para id="id2257855">It is important to note that both curves are not drastically different. While the CLS curve represents optimality in an <m:math overflow="scroll"><m:mrow><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub><m:mo>-</m:mo><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:mrow></m:math> sense, not all the problems mentioned in this work can be solved using CLS filters (for example, the <emphasis effect="italics">magnitude</emphasis> IIR problem presented in <link target-id=""/>). Also, one of the objectives of this work is to motivate the use of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norms for filter design problems, and the proposed CLS implementations (which absolutely depends on IRLS-based <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> formulations) are good examples of the flexibility and value of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IRLS methods discussed in this work.</para>
+      <figure id="uid22"><media id="uid22_media" alt="This graph is a representation of the Comparison of CLS versus L_P errors. The x-axis is labeled ε_2 and the y-axis is labeled ε_∞. The graph contains two different curves. One curve represent L_p and is identified by a dotted blue line with points indicated by green stars. The other curve represents CLS curve is identified by a red dashed line with points identified by green squares. The L_p curve sits higher than the CLS curve.">
+          <image mime-type="image/png" src="../../media/lpclscurve.png" id="uid22_onlineimage" width="722" print-width="4.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 722. --></image>
+          </media>
+        
+      <caption>Comparison between CLS and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problems.</caption></figure>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid0">
+      <bib:article>
+<!--required fields-->
+        <bib:author>Adams, John W.</bib:author>
+        <bib:title>FIR Digital Filters with Least-Squares Stopbands Subject to Peak-Gain Constraints</bib:title>
+        <bib:journal>IEEE Trans. on Circuits and Systems</bib:journal>
+        <bib:year>1991</bib:year>
+<!--optional fields-->
+        <bib:volume>39</bib:volume>
+        <bib:number>4</bib:number>
+        <bib:pages>376-388</bib:pages>
+        <bib:month>April</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid1">
+      <bib:article>
+<!--required fields-->
+        <bib:author>Adams, John W. and Sullivan, James L.</bib:author>
+        <bib:title>Peak-Constrained Least-Squares Optimization</bib:title>
+        <bib:journal>IEEE Trans. on Signal Processing</bib:journal>
+        <bib:year>1998</bib:year>
+<!--optional fields-->
+        <bib:volume>46</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>306-321</bib:pages>
+        <bib:month>Febr.</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid2">
+      <bib:article>
+<!--required fields-->
+        <bib:author>Selesnick, Ivan W. and Lang, Markus and Burrus, Charles S.</bib:author>
+        <bib:title>Constrained Least Square Design of FIR Filters without Specified Transition Bands</bib:title>
+        <bib:journal>IEEE Transactions on Signal Processing</bib:journal>
+        <bib:year>1996</bib:year>
+<!--optional fields-->
+        <bib:volume>44</bib:volume>
+        <bib:number>8</bib:number>
+        <bib:pages>1879-1892</bib:pages>
+        <bib:month>August</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+  </bib:file>
+</document>

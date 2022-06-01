@@ -1,0 +1,212 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML">
+  <title>Notation Conventions</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41692</md:content-id>
+  <md:title>Notation Conventions</md:title>
+  <md:abstract/>
+  <md:uuid>7970df98-2bb5-4e52-907e-928d5904affa</md:uuid>
+</metadata>
+
+<content>
+    <para id="id200645">Following is a list of the notation conventions used in this work. This convention is the result of a compromise between notation styles from the theoretical and applied mathematics and electrical engineering communities in order to keep consistency across the document.</para>
+    <table id="uid1" summary="A 17x2 table containing the notation convention in the left column and description of the convention in the right column.">
+<tgroup cols="2"><tbody>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi>a</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>A</m:mi>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Scalars</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi mathvariant="bold">H</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi mathvariant="bold">C</m:mi>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Matrices</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi>h</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>x</m:mi>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Vectors</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>X</m:mi>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Vectors (typically the frequency domain representation of another vector)</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>h</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:msub>
+                  <m:mo>,</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry><m:math overflow="scroll"><m:mi>n</m:mi></m:math>-th element of vector <m:math overflow="scroll"><m:mi>h</m:mi></m:math> (a scalar)</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:msub>
+                  <m:mi>h</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+              </m:math>
+            </entry>
+            <entry>Solution for <m:math overflow="scroll"><m:mi>h</m:mi></m:math> after <m:math overflow="scroll"><m:mi>k</m:mi></m:math> iterations on any given optimization algorithm (a vector)</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:msup>
+                  <m:mi>h</m:mi>
+                  <m:mo>⋆</m:mo>
+                </m:msup>
+              </m:math>
+            </entry>
+            <entry>Optimal solution vector for a given problem</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:msub>
+                  <m:mi>a</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+              </m:math>
+            </entry>
+            <entry>Solution for <m:math overflow="scroll"><m:mi>a</m:mi></m:math> at <m:math overflow="scroll"><m:mi>i</m:mi></m:math>-th iteration</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:msub>
+                  <m:mi>a</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+              </m:math>
+            </entry>
+            <entry><m:math overflow="scroll"><m:mi>k</m:mi></m:math>-th entry of vector <m:math overflow="scroll"><m:mi>a</m:mi></m:math></entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mi>ω</m:mi>
+              </m:math>
+            </entry>
+            <entry>Radial frequency (with period <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math> for discrete signals)</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mi>f</m:mi>
+              </m:math>
+            </entry>
+            <entry>Linear frequency (related to <m:math overflow="scroll"><m:mi>ω</m:mi></m:math> via <m:math overflow="scroll"><m:mrow><m:mi>ω</m:mi><m:mo>=</m:mo><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>f</m:mi></m:mrow></m:math>)</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi mathvariant="script">F</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mo>·</m:mo>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Fourier Transform operator</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi mathvariant="script">D</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mo>·</m:mo>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Discrete-time Fourier Transform operator</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mrow>
+                  <m:mi mathvariant="script">Z</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mo>·</m:mo>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:math>
+            </entry>
+            <entry>Z-Transform operator</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mo>*</m:mo>
+              </m:math>
+            </entry>
+            <entry>Convolution operator</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mi mathvariant="double-struck">R</m:mi>
+              </m:math>
+            </entry>
+            <entry>Field of real numbers</entry>
+          </row>
+          <row>
+            <entry>
+              <m:math overflow="scroll">
+                <m:mi mathvariant="double-struck">C</m:mi>
+              </m:math>
+            </entry>
+            <entry>Field of complex numbers</entry>
+          </row>
+        </tbody>
+      
+
+</tgroup>
+</table>
+  </content>
+  
+</document>

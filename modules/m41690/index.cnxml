@@ -1,0 +1,419 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Appendix: Matlab Code</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41690</md:content-id>
+  <md:title>Appendix: Matlab Code</md:title>
+  <md:abstract/>
+  <md:uuid>6ab13b2c-c67e-44ee-9d5b-369cda928806</md:uuid>
+</metadata>
+
+<content>
+    <para id="id157295">This section includes Matlab implementations of some of the algorithms described in this work.</para>
+    <section id="cid1">
+      <title>The linear phase <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> FIR algorithm</title>
+      <para id="id157321">The following program designs a Type-I length-<m:math overflow="scroll"><m:mi>L</m:mi></m:math> linear phase <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> filter with fixed transition bands. The code creates even sampling in the bands but it can easily be modified to accomodate for uneven sampling. For other linear phase types the user can modify the definition of <code display="inline">C</code> according to <link target-id=""/>.</para>
+      <code id="id157693" display="block">% Lp Linear Phase design program. Uses p-homotopy and partial updating.
+ 
+% Author: R. A. Vargas, 4-20-08
+ 
+%%% User parameters
+P = 400;                         % Desired p
+K = 1.7;                         % Homotopy rate
+fp = 0.2; fs = 0.24;             % Normalized passband &amp; stopband
+L  = 21;                         % Filter length
+ 
+%%% Initialization
+NF = 2^ceil(log2(10*L));         % Number of frequency samples
+Np = round(NF*fp/(.5 - (fs - fp))); % No. of passband samples
+dp = fp/(Np - 1);
+Ns = NF - Np;                    % No. of stopband samples
+ds = (0.5 - fs)/(Ns - 1);
+fd = [(0:Np - 2)*dp,fp,(0:Ns - 2)*ds + fs,0.5]'; % Frequencies
+Ad = [ones(Np,1); zeros(Ns,1)];  % Desired response
+M = floor((L+1)/2)-1;
+C = cos(2*pi*fd*(0:M));          % Fourier matrix
+a = C\Ad;                        % L2 initial guess
+e = C*a - Ad;                    % Initial error
+ 
+%%% Algorithm iteration
+c = 1; i = 40; p = 2;
+while (c&lt;i),
+    c = c+1;
+    p = min(P,K*p);              % p-homotopy update
+    w = abs(e).^((p-2)/2);       % Lp weight update
+    W = diag(w/sum(w));          % Normalized weights
+    x = (W*C)\(W*Ad);            % WLS solution
+    a = (x + (p-2)*a) ./(p-1);   % Partial update
+    e = C*a - Ad;                % Error
+end
+ 
+%%% Recovery of h from a
+a(1) = 2*a(1);
+h = [flipud(a(2:length(a)));a]./2;
+</code>
+    </section>
+    <section id="cid2">
+      <title>The adaptive linear phase <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> FIR algorithm</title>
+      <para id="id158096">The following code expands on the program from <link target-id="cid1">"The linear phase <m:math><m:mrow><m:msub><m:mn>l</m:mn><m:mn>p</m:mn></m:msub></m:mrow></m:math>  FIR algorithm"</link>. If at a given iteration the error increases, the idea is to take a step back in <m:math overflow="scroll"><m:mi>p</m:mi></m:math> and then take a smaller step. This is achieved by reducing the homotopy step parameter <code display="inline">K</code> in the program.</para>
+      <code id="id158118" display="block">% Lp Linear Phase design program. Uses p-homotopy and partial updating.
+% This code uses the adaptive algorithm.
+ 
+% Author: R. A. Vargas, 4-20-08
+ 
+%%% User parameters
+P = 200;                         % Desired p
+K = 1.7;                         % Homotopy rate
+fp = 0.2; fs = 0.248;            % Normalized passband &amp; stopband
+L  = 21;                         % Filter length
+dk = 0.9;                        % K update factor
+ 
+%%% Initialization
+NF = 2^ceil(log2(10*L));         % Number of frequency samples
+Np = round(NF*fp/(.5 - (fs - fp))); % No. of passband samples
+dp = fp/(Np - 1);
+Ns = NF - Np;                    % No. of stopband samples
+ds = (0.5 - fs)/(Ns - 1);
+fd = [(0:Np - 2)*dp,fp,(0:Ns - 2)*ds + fs,0.5]'; % Frequencies
+Ad = [ones(Np,1); zeros(Ns,1)];  % Desired response
+M = floor((L+1)/2)-1;
+C = cos(2*pi*fd*(0:M));          % Fourier matrix
+a = C\Ad; a0 = a;                % L2 initial guess
+e = C*a - Ad; en = e;            % Initial error
+ 
+%%% Algorithm iteration
+c = 1; maxiter = 40; p = 2;
+while (c&lt;maxiter),
+   p = min(P,K*p);               % p-homotopy update
+   w = abs(e).^((p-2)/2);        % Lp weight update
+   W = diag(w/sum(w));           % Normalized weights
+   x = (W*C)\(W*Ad);             % WLS solution
+   a = (x + (p-2)*a) ./(p-1);    % Partial update
+   en = C*a - Ad;                % Error
+   if (norm(en,P) &lt;= norm(e,P)) | p&gt;=P
+      c = c+1;
+      e = en;
+      a0 = a;
+   else
+      a = a0;
+      p = p/K;
+      K = dk*K;                  % Update homotopy step
+   end
+end
+ 
+%%% Recovery of h from a
+a(1) = 2*a(1);
+h = [flipud(a(2:length(a)));a]./2;
+</code>
+    </section>
+    <section id="cid3">
+      <title>The constrained <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> FIR algorithm</title>
+      <para id="id158612">This program designs a constrained <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> linear phase filter without requiring a fixed transition band. Based on a transition frequency the program determines at each iteration an induced transition band and creates weights to "constrain" the error. One of the key steps is determining the frequencies that exceed the constrains and, from these frequencies, determine the induced transition band.</para>
+      <code id="id158632" display="block">% Code for CLS design. This example designs a linear phase filter.
+% No transition bands are described.
+ 
+% Author: R. A. Vargas, 4-20-08
+ 
+%%% User parameters
+P = 80;                    % Desired p
+K = 1.7;                   % p-homotopy rate
+ft = 0.25;                 % Transition frequency
+L = 21;                    % Filter length
+tol = 0.02;                % Constraint tolerance
+ 
+%%% Initialization
+NF = 2^ceil(log2(10*L));   % No. of frequency samples
+fd = linspace(0,.5,NF)';   % Linearly spaced sampled frequencies
+Ad = ones(NF,1);           % Desired frequency response
+x = find(fd&gt;ft); Ad(x) = zeros(size(x)); % Add zeros on stopband
+C = cos(2*pi*fd*[0:floor((L+1)/2)-1]);    % Fourier matrix
+a = C\Ad;                  % L2 initial guess
+e = C*a - Ad;              % Initial error
+ 
+%%% Algorithm iteration
+i = 60;                    % Maximum number of iterations
+c = 1; p = 2;
+for m = 1:i, m,p
+    p = min(K*p,P);                     % P-homotopy
+    w = 1 + abs((e./(0.95*tol)).^((p-2)/2));  % Polynomial weighting
+    X = local_max(-abs(e));             % Find all local extrema
+    % Here we find the index of the two extrema near the trans band
+    Ep = max(X(find(fd(X)&lt;ft)));        % Passband extrema
+    Es = min(X(find(fd(X)&gt;ft)));        % Stopband extrema
+    w(Ep:Es) = 1;                       % Unweighting of trans band
+    % WLS solution w/partial update
+    a = ((p-2)*a + ((diag(w)*C)\(diag(w)*Ad))) ./ (p-1);
+    e = C*a - Ad;
+end
+ 
+%%% Recovery of h from a
+a(1) = 2*a(1);
+h = [flipud(a(2:length(a)));a]./2;
+</code>
+    </section>
+    <section id="cid4">
+      <title>The complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR algorithm</title>
+      <para id="id159049">The following program designs an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR filter given a complex-valued desired frequency response. Note the similarities of the program compared to the FIR ones. This program calls the function <code display="inline">l2soe</code> from <link target-id="cid5">"An implementation of Soewito's quasilinearization"</link> to solve the weighted nonlinear <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> problem.</para>
+      <code id="id159090" display="block">function [b,a] = cplx_lp_iir(b0,a0,D,w,P);
+% function [b,a] = CPLX_LP_IIR(b0,a0,D,w,p);
+% This function designs an Lp IIR filter given a complex desired
+% frequency response arbitrarily sampled between 0 and PI. The
+% algorithm used is an Iterative Reweighted Least Squares (IRLS)
+% method. For the WLS part, a quasilinearization L2 IIR algorithm
+% is used.
+%
+% [b0,a0] : Initial guess
+% D : Desired complex response (defined between 0 and PI)
+% w : Frequency samples between 0 and PI
+% p : Desired maximum p
+ 
+% Author: R. A. Vargas, 4-20-08
+ 
+%%% Initialization
+[b,a] = l2soe(b0,a0,D,w);   % Initial guess
+M = length(b); N = length(a); % Numerator and denominator lengths
+w = w(:); d = D(:);
+if (~(isreal(d(1)) &amp;&amp; isreal(d(length(d))) )),
+   error('Real filters have real spectra values at 0 and Pi');
+end
+% Form conjugate symmetric desired response and frequencies
+D = [d; flipud(conj(d(2:length(d)-1)))];
+f = [w; 2*pi-flipud(w(2:length(w)-1))];
+K = 1.7; p = 2;
+mxit = 100; etol = 0.01; c = 0;
+b0 = zeros(size(b)); a0 = zeros(size(a));
+ 
+% Algorithm iteration
+while ((norm([b0;a0]-[b;a],2) &gt;= etol &amp; c&lt;mxit) | p&lt;P),
+   c = c+1; b0 = b; a0 = a;
+   p = min(P,K*p);                     % p homotopy
+   W = abs(freqz(b,a,w) - d).^((p-2)/2);
+   [bb,aa] = l2soe(b,a,d,w,W,60);      % L2 quasilinearization
+   b = (bb + (p-2)*b) ./(p-1);         % Partial update for b
+   a = (aa + (p-2)*a) ./(p-1);         % Partial update for a
+end
+</code>
+    </section>
+    <section id="cid5">
+      <title>An implementation of Soewito's quasilinearization</title>
+      <para id="id159488">The following is the author's implementation of Soewito's linearization. This program is based on the theoretical development presented in <link target-id="bid0"/>, and is designed to be used by other programs in this work. For the original implementation (which includes a number of additions to handle numerical issues) the reader should consult the original work by A. Soewito <link target-id="bid0"/>.</para>
+      <code id="id159506" display="block">function [bb,aa] = l2soe(b,a,D,varargin)
+% This program is an implementation of Soewito's quasilinearization
+% to design least squares filters using a solution error criterion.
+% This implementation accepts arbitrary samples between 0 and pi,
+% and requires an initial filter guess.
+%
+% [B,A] = L2SOE(Bo,Ao,D) designs an optimal L2 approximation to a
+% complex response D that is specified over a uniform frequency
+% grid between 0 and PI, using as initial point the vector {Bo,Ao}.
+%
+% [B,A] = L2SOE(Bo,Ao,D,F) designs an optimal L2 approximation to a
+% complex response D that is specified over a nonuniform frequency
+% grid F defined between 0 and PI.
+%
+% [B,A] = L2SOE(Bo,Ao,D,F,W) designs a weighted L2 approximation,
+% with weighting function W.
+%
+% [B,A] = L2SOE(Bo,Ao,D,F,W,ITER) finds a solution in at most ITER
+% iterations (the default for this value is 30 iterations).
+%
+% [B,A] = L2SOE(Bo,Ao,D,F,W,ITER,TOL) defines convergence when the
+% norm of the updating vector is less than TOL (default is 0.01).
+%
+% [B,A] = L2SOE(Bo,Ao,D,...,'diags') plots the desired and current
+% spectra at each iteration and displays error measurements.
+ 
+% Author: R. A. Vargas, 4-20-08
+ 
+error(nargchk(3,8,nargin))
+if isempty(varargin), fdiags = false;
+else
+   fdiags = varargin(length(varargin));
+   if (ischar(fdiags{1}) &amp;&amp; strcmp(fdiags,'diags')),
+      fdiags = true; varargin(length(varargin)) = [];
+   else fdiags = false; end
+end
+if length(varargin)&lt;4    % pad varargin with []'s
+   varargin{4} = [];
+end
+[f,W,mxit,etol] = deal(varargin{:});
+if isempty(W), W = ones(size(D)); end; W = W(:);
+if isempty(mxit), mxit = 30; end
+if isempty(etol), etol = 0.01; end
+ 
+M = length(b); N = length(a); % Numerator and denominator lengths
+d = D(:);   % Form conjugate symmetric desired response and weights
+if (~(isreal(d(1)) &amp;&amp; isreal(d(length(d))) )),
+   error('Real filters have real spectra values at 0 and Pi');
+end
+D = [d; flipud(conj(d(2:length(d)-1)))];
+W = [W; flipud(conj(W(2:length(W)-1)))];
+% Define frequencies over whole unit circle
+if isempty(f), f = [0:2*pi/length(D):2*pi*(length(D)-1)/length(D)]';
+else f = [f; 2*pi-flipud(f(2:length(f)-1))]; end
+% Initialize relevant variables
+h = [b; a(2:N)];
+F = [exp(-i.*(f*[0:M-1])) -diag(D)*exp(-i.*(f*[1:N-1]))];
+b0 = zeros(size(b)); a0 = zeros(size(a)); c = 0;
+ 
+% Iterative loop
+while (norm([b0;a0]-[b;a],2) &gt;= etol &amp;&amp; c&lt;mxit),
+   c = c+1; b0 = b; a0 = a;
+   % Vector update
+   V = diag(W.*freqz(1,a,f));
+   H = freqz(b,a,f);
+   G = [exp(-i.*(f*[0:M-1])) -diag(H)*exp(-i.*(f*[1:N-1]))];
+   h = (V*G)\(V*(D+H-F*h));
+   b = h(1:M);
+   a = [1; h(M+1:length(h))];
+   % Diagnostics
+   if fdiags,
+      sprintf(strcat('Iteration = %g,',' Error norm = %g '),...
+         c,norm(D-freqz(b,a,f),2))
+      [hh,ff] = freqz(b,a,1024,'whole');
+      plot(f./(2*pi),abs(D),'.',ff./(2*pi),abs(hh))
+      title(strcat('Iteration:',int2str(c))); pause
+   end
+end
+ 
+%if fdiags,
+if c==mxit, disp('Maximum number of L2 iterations reached')
+else sprintf('L2 convergence reached after %g iterations',c)
+end
+bb = real(b); aa = real(a);
+</code>
+    </section>
+    <section id="cid6">
+      <title>The magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IIR algorithm</title>
+      <para id="id160411">This program implements the algorithm presented in <link target-id=""/> to design an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> magnitude IIR filter. The program combines ideas used in the programs mentioned above, including <m:math overflow="scroll"><m:mi>p</m:mi></m:math>-homotopy and partial filter updating, together with the concept of phase updating (to achieve magnitude approximation) and the quasilinearization implementation from <link target-id="cid5">"An implementation of Soewito's quasilinearization"</link>. To improve on the convergence properties, the program initially implements equation error and solution error <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> algorithms to generate a suitable initial guess for the magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> iteration. it is important torealize that each of the three computatino al stages of this code can be fine-tuned in terms of convergence parameters. This program uses even sampling but it can easily be modified for uneven sampling (by merely changing the initial definition of <code display="inline">f</code>). the program also defines a ramp transition band but the user can define any desired real response by defining <code display="inline">h</code> below.</para>
+      <code id="id160490" display="block">% This program designs a magnitude lp IIR digital filter.
+% Data is uniformly sampled between 0 and PI.
+ 
+% Author: R. A. Vargas, 4-20-08
+ 
+%%% User parameters
+M = 5; N = 5;                % Numerator &amp; denominator lengths
+fp = 0.2; fs = 0.24;         % Normalized passband &amp; stopband
+t = 129;                     % Number of samples between 0 &amp; pi
+P = 30;                      % Desired p
+K = 1.4;                     % Homotopy rate
+ 
+%%% Initialization
+w = [0:pi/(t-1):pi]';        % Radial frequency
+ip = max(find(w&lt;=fp*2*pi));  % Passband indexes
+is = min(find(w&gt;=fs*2*pi));  % Stopband indexes
+it = ip+1:is-1;              % Transition band indexes
+ih = [1:ip is:t-1];          % Indexes at which error is measured
+% Form conjugate symmetric desired response D and frequency f
+h(1:ip) = ones(ip,1); h(is:t) = zeros(t-is+1,1);
+h(ip+1:is-1) = ((w(ip+1:is-1)/2/pi)-fs)./(fp-fs); d = h(:);
+D = [d; flipud(conj(d(2:length(d)-1)))];
+f = [w; 2*pi-flipud(w(2:length(w)-1))];
+L = length(D);               % Number of samples on unit circle
+ 
+%%% Equation Error Magnitude L2 estimation via Prony
+mxit = 100;                  % Max. iterations for Prony stage
+etol = 0.01;                 % Error tolerance for Prony stage
+k = 2*etol; c = 0; a0 = zeros(N,1); b0 = zeros(M,1);
+while (k&gt;=etol &amp;&amp; c&lt;mxit),
+   c = c+1;
+   h = ifft(D);
+   H = h(toeplitz([1:L]',[1 L:-1:L-N+2]));
+   H1 = H(1:M,:); h2 = H(M+1:L,1);
+   H2 = H(M+1:L,2:size(H,2));
+   a = [1; -H2\h2];
+   b = H1*a;
+   k = norm([b0;a0]-[b;a],2);
+   a0 = a; b0 = b;
+   G = fft(b,L)./fft(a,L);
+   D = abs(D).*G./abs(G);
+end
+ 
+%%% Solution Error Magnitude L2 estimation via Quasilinearization
+% Max. iterations for Solution Error L2 stage
+mxitM = 50; mxit2 = 50;
+% Error tolerances for Solution Error L2 stage
+etolM = 0.005; etol2 = 0.01;
+cM = 0; bM = zeros(size(b)); aM = zeros(size(a));
+while (norm([bM;aM]-[b;a],2)&gt;=etolM &amp;&amp; cM&lt;mxitM),
+   % Initialize relevant variables at each phase update
+   cM = cM+1; bM = b; aM = a;
+   G = fft(b,L)./fft(a,L);
+   D = abs(D).*G./abs(G);  % Phase Update
+   h = [b; a(2:N)];
+   F = [exp(-i.*(f*[0:M-1])) -diag(D)*exp(-i.*(f*[1:N-1]))];
+   b2 = zeros(size(b)); a2 = zeros(size(a)); c2 = 0;
+   %%% Complex L2 loop using Quasilinearization
+   while (norm([b2;a2]-[b;a],2)&gt;=etol2 &amp;&amp; c2&lt;mxit2),
+      c2 = c2+1; b2 = b; a2 = a;
+      V = diag(freqz(1,a,f));    % Vector update
+      H = freqz(b,a,f);
+      G = [exp(-i.*(f*[0:M-1])) -diag(H)*exp(-i.*(f*[1:N-1]))];
+      h = (V*G)\(V*(D+H-F*h));
+      b = h(1:M);
+      a = [1; h(M+1:length(h))];
+   end
+end
+ 
+%%% Magnitude Lp Iterative Method
+% Max. iterations for Solution Error Lp stage
+mxitP = 200; mxitM = 60; mxit2 = 50;
+% Error tolerances for Solution Error Lp stage
+etolP = 0.005; etolM = 0.005; etol2 = 0.005;
+W = ones(size(d)); W = [W; flipud(conj(W(2:length(W)-1)))];
+bP = zeros(size(b)); aP = zeros(size(a)); cP = 0; p = 2*K;
+%%% Outer loop to update p
+while (norm([bP;aP]-[b;a],2) &gt;= etolP &amp;&amp; cP&lt;mxitP &amp;&amp; p&lt;=P),
+   if p&gt;=P, etolP = 0.0001; end
+   % Initialize relevant variables at each update of p
+   cP = cP + 1; bP = b; aP = a;
+   bM = zeros(size(b)); aM = zeros(size(a)); cM = 0;
+   %%% Magnitude Lp loop via phase update
+   while (norm([bM;aM]-[b;a],2) &gt;= etolM &amp;&amp; cM&lt;mxitM),
+      % Initialize relevant variables at each phase update
+      cM = cM+1; bM = b; aM = a;
+      h = [b; a(2:N)];
+      b2 = zeros(size(b)); a2 = zeros(size(a)); c2 = 0;
+      G = freqz(b,a,f);
+      D = abs(D).*G./abs(G);  % Phase Update
+      F = [exp(-i.*(f*[0:M-1])) -diag(D)*exp(-i.*(f*[1:N-1]))];
+      E = abs(D - freqz(b,a,f));
+      W = E.^((p-2)/2);
+      W(it) = W(it)./4;
+      %%% Complex Lp loop via WCL2 using Quasilinearization
+      while (norm([b2;a2]-[b;a],2) &gt;= etol2 &amp;&amp; c2&lt;mxit2),
+         c2 = c2+1; b2 = b; a2 = a;
+         V = diag(W.*freqz(1,a,f));    % Vector update
+         H = freqz(b,a,f);
+         G = [exp(-i.*(f*[0:M-1])) -diag(H)*exp(-i.*(f*[1:N-1]))];
+         h = (V*G)\(V*(D+H-F*h));
+         b = h(1:M);
+         a = [1; h(M+1:length(h))];
+      end
+      % Partial Update
+      b = (b + (p-2)*bM) ./(p-1);
+      a = (a + (p-2)*aM) ./(p-1);
+   end
+   G = fft(b,L)./fft(a,L);
+   D = abs(D).*G./abs(G);
+   p = min(P,K*p);
+end
+</code>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid0">
+      <bib:phdthesis>
+        <!--required fields-->
+        <bib:author>Soewito, Atmadji W.</bib:author>
+        <bib:title>Least Square Digital Filter Design in the Frequency Domain</bib:title>
+        <bib:school>Rice University</bib:school>
+        <bib:year>1990</bib:year>
+        <!--optional fields-->
+        <bib:type>Ph. D. Thesis</bib:type>
+        <bib:address/>
+        <bib:month>December</bib:month>
+        <bib:note/>
+      </bib:phdthesis>
+    </bib:entry>
+  </bib:file>
+</document>

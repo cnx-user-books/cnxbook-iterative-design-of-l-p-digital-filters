@@ -1,0 +1,497 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Magnitude l_p problem</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41676</md:content-id>
+  <md:title>Magnitude l_p problem</md:title>
+  <md:abstract/>
+  <md:uuid>c82840fd-5ea0-40d5-bcdb-45ac4a78780a</md:uuid>
+</metadata>
+
+<content>
+    <para id="id141423">In some applications, the effects of phase are not a necessary factor to consider when designing a filter. For these applications, control of the filter's magnitude response is a priority for the designer. In order to improve the magnitude response of a filter, one must not explicitly include a phase, so that the optimization algorithm can look for the best filter that approximates a specified magnitude, without being constrained about optimizing for a phase response too.</para>
+    <section id="uid1">
+      <title>Power approximation formulation</title>
+      <para id="id141439">The magnitude approximation problem can be formulated as follows:</para>
+      <equation id="uid2"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msubsup>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>D</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>-</m:mo>
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>;</m:mo>
+                    <m:mi>h</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+              <m:mi>p</m:mi>
+            </m:msubsup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142033">Unfortunately, the second term inside the norm (namely the absolute value function) is not differentiable when its argument is zero. Although one could propose ways to work around this problem, I propose the use of a different design criterion, namely the approximation of a desired magnitude squared. The resulting problem is</para>
+      <equation id="id142041"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msubsup>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>D</m:mi>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mo>-</m:mo>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>|</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>;</m:mo>
+                      <m:mi>h</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mspace width="0.277778em"/>
+                    <m:mo>|</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+              <m:mi>p</m:mi>
+            </m:msubsup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142125">The autocorrelation <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> of a causal length-<m:math overflow="scroll"><m:mi>N</m:mi></m:math> FIR filter <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is given by</para>
+      <equation id="uid3"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>r</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>*</m:mo>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mo>-</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>=</m:mo>
+                <m:mo>-</m:mo>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142274">The Fourier transform of the autocorrelation <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is known as the <emphasis effect="italics">Power Spectral Density</emphasis> function <link target-id="bid0"/> <m:math overflow="scroll"><m:mrow><m:mi>R</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> (or simply the SPD), and is defined as follows,</para>
+      <equation id="id142321"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>R</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>   
+           <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mo>-</m:mo>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>r</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>ω</m:mi>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>         
+     <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mo>-</m:mo>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+<m:mspace width="5px"/>
+            <m:munderover>
+<m:mrow>   
+           <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>=</m:mo>
+                <m:mo>-</m:mo>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>ω</m:mi>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142503">From the properties of the Fourier Transform <link target-id="bid1"/> one can show that there exists a frequency domain relationship between <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> given by</para>
+      <equation id="id142546">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>R</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>·</m:mo>
+            <m:msup>
+              <m:mi>H</m:mi>
+              <m:mo>*</m:mo>
+            </m:msup>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mo>-</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>H</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mn>2</m:mn>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142618">This relationship suggests a way to design magnitude-squared filters, namely by using the filter's autocorrelation coefficients instead of the filter coefficients themselves. In this way, one can avoid the use of the non-differentiable magnitude response.</para>
+      <para id="id142625">An important property to note at this point is the fact that since the filter coefficients are real, one can see from <link target-id="uid3"/> that the autocorrelation function <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is symmetric; thus it is sufficient to consider its last <m:math overflow="scroll"><m:mi>N</m:mi></m:math> values. As a result, the PSD can be written as</para>
+      <equation id="id142658"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>R</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munder>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+      <m:mi>n</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mi>r</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>ω</m:mi>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>=</m:mo>
+            <m:mi>r</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>+</m:mo>
+            <m:munderover>
+<m:mrow>         
+     <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mn>2</m:mn>
+            <m:mi>r</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mtext>cos</m:mtext>
+            <m:mi>ω</m:mi>
+            <m:mi>n</m:mi>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142766">in a similar way to the linear phase problem.</para>
+      <para id="id142772">The symmetry property introduced above allows for the use of the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> linear phase algorithm of <link target-id=""/> to obtain the autocorrelation coefficients of <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>. However, there is an important step missing in this discussion: how to obtain the filter coefficients from its autocorrelation. To achieve this goal, one can follow a procedure known as <emphasis effect="italics">Spectral Factorization</emphasis>. The objective is to use the autocorrelation coefficients <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> instead of the filter coefficients <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> as the optimization variables. The variable transformation is done using <link target-id="uid4"/>, which is not a one-to-one transformation. Because of the last result, there is a necessary condition for a vector <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> to be a valid autocorrelation vector of a filter. This is summarized <link target-id="bid2"/> in the <emphasis effect="italics">spectral factorization theorem</emphasis>, which states that <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> is the autocorrelation function of a filter <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> if and only if <m:math overflow="scroll"><m:mrow><m:mi>R</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mspace width="-0.166667em"/><m:mo>≥</m:mo><m:mspace width="-0.166667em"/><m:mn>0</m:mn></m:mrow></m:math> for all <m:math overflow="scroll"><m:mrow><m:mi>ω</m:mi><m:mo>∈</m:mo><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math>. This turns out to be a necessary and sufficient condition <link target-id="bid2"/> for the existence of <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>. Once the autocorrelation vector <m:math overflow="scroll"><m:mi>r</m:mi></m:math> is found using existing robust interior-point algorithms, the filter coefficients can be calculated via spectral factorization techniques.</para>
+      <para id="id143007">Assuming a valid vector <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> can be found for a particular filter <m:math overflow="scroll"><m:mi>h</m:mi></m:math>, the problem presented in <link target-id="uid2"/> can be rewritten as</para>
+      <equation id="uid4">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>L</m:mi>
+            <m:msup>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mn>2</m:mn>
+            </m:msup>
+            <m:mspace width="-0.166667em"/>
+            <m:mo>≤</m:mo>
+            <m:mspace width="-0.166667em"/>
+            <m:mi>R</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="-0.166667em"/>
+            <m:mo>≤</m:mo>
+            <m:mspace width="-0.166667em"/>
+            <m:mi>U</m:mi>
+            <m:msup>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mn>2</m:mn>
+            </m:msup>
+            <m:mspace width="0.277778em"/>
+            <m:mspace width="0.277778em"/>
+            <m:mspace width="0.277778em"/>
+            <m:mspace width="0.277778em"/>
+            <m:mo>∀</m:mo>
+            <m:mspace width="0.277778em"/>
+            <m:mi>ω</m:mi>
+            <m:mo>∈</m:mo>
+            <m:mrow>
+              <m:mo>[</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>,</m:mo>
+              <m:mi>π</m:mi>
+              <m:mo>]</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id143145">In <link target-id="uid4"/> the existence condition <m:math overflow="scroll"><m:mrow><m:mi>R</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mspace width="-0.166667em"/><m:mo>≥</m:mo><m:mspace width="-0.166667em"/><m:mn>0</m:mn></m:mrow></m:math> is redundant since <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>L</m:mi><m:msup><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow><m:mn>2</m:mn></m:msup></m:mrow></m:math> and, thus, is not included in the problem definition. For each <m:math overflow="scroll"><m:mi>ω</m:mi></m:math>, the constraints of <link target-id="uid4"/> constitute a pair of linear inequalities in the vector <m:math overflow="scroll"><m:mi>r</m:mi></m:math>; therefore the constraint is convex in <m:math overflow="scroll"><m:mi>r</m:mi></m:math>. Thus the change of variable transforms a nonconvex optimization problem in <m:math overflow="scroll"><m:mi>h</m:mi></m:math> into a convex problem in <m:math overflow="scroll"><m:mi>r</m:mi></m:math>.</para>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid1">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Proakis, John G. and Manolakis, Dimitris G.</bib:author>
+        <bib:title>Digital Signal Processing</bib:title>
+        <bib:publisher>Macmillan Publishing Co.</bib:publisher>
+        <bib:year>1988</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Shanmugan, K. Sam and Breipohl, A. M.</bib:author>
+        <bib:title>Random Signals: Detection, Estimation and Data Analysis</bib:title>
+        <bib:publisher>John Wiley &amp; Sons</bib:publisher>
+        <bib:year>1988</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid2">
+      <bib:unpublished>
+        <!--required fields-->
+        <bib:author>Wu, Shao-Po and Boyd, Stephen and Vandenberghe, Lieven</bib:author>
+        <bib:title>FIR Filter design via Spectral Factorization and Convex Optimization</bib:title>
+        <bib:note>To Appear in Applied Computational Control, Signal and Communications, Biswa Datt editor, Birkhauser, 1997.</bib:note>
+        <!--optional fields-->
+        <bib:month/>
+        <bib:year/>
+      </bib:unpublished>
+    </bib:entry>
+  </bib:file>
+</document>

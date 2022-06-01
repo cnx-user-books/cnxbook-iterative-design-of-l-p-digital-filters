@@ -1,0 +1,981 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Finite Impulse Response (FIR) l_p design</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41668</md:content-id>
+  <md:title>Finite Impulse Response (FIR) l_p design</md:title>
+  <md:abstract/>
+  <md:uuid>b34e46f9-7685-47e3-93d0-ff12ce90e7eb</md:uuid>
+</metadata>
+
+<content>
+    <para id="id312738">A <emphasis effect="italics">Finite Impulse Response</emphasis> (<emphasis effect="bold">FIR</emphasis>) filter is an ordered vector <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>∈</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup></m:mrow></m:math> (where <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>N</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>), with a complex polynomial form in the frequency domain given by</para>
+    <equation id="id313143"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:mi>H</m:mi>
+          <m:mrow>
+            <m:mo>(</m:mo>
+            <m:mi>ω</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+          <m:mo>=</m:mo>
+          <m:munderover>
+<m:mrow>
+            <m:mo>∑</m:mo>
+</m:mrow>        
+    <m:mrow>
+              <m:mi>n</m:mi>
+              <m:mo>=</m:mo>
+              <m:mn>0</m:mn>
+            </m:mrow>
+            <m:mrow>
+              <m:mi>N</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+            </m:mrow>
+          </m:munderover>
+          <m:msub>
+            <m:mi>h</m:mi>
+            <m:mi>n</m:mi>
+          </m:msub>
+          <m:msup>
+            <m:mi>e</m:mi>
+            <m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>j</m:mi>
+              <m:mi>ω</m:mi>
+              <m:mi>n</m:mi>
+            </m:mrow>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id313387">The filter <m:math overflow="scroll"><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> contains amplitude and phase components <m:math overflow="scroll"><m:mfenced separators="" open="{" close="}"><m:msub><m:mi>A</m:mi><m:mi>H</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow><m:mo>,</m:mo><m:msub><m:mi>φ</m:mi><m:mi>H</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mfenced></m:math> that can be designed to suit the user's purpose.</para>
+    <para id="id313453">Given a desired frequency response <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>, the general <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> approximation problem is given by</para>
+    <equation id="id313485"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow> 
+<m:mrow>       
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msub>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>h</m:mi>
+                <m:mo>;</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mi>p</m:mi>
+          </m:msub>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id313545">In the most basic scenario <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> would be a complex valued function, and the optimization algorithm would minimize the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norm of the complex error function <m:math overflow="scroll"><m:mrow><m:mi>ϵ</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>-</m:mo><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>; we refer to this case as the complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> design problem (refer to <link target-id=""/>).</para>
+    <para id="id313636">One of the caveats of solving complex approximation problems is that the user must provide desired magnitude and phase specifications. In many applications one is interested in removing or altering a range of frequencies from a signal; in such instances it might be more convenient to only provide the algorithm with a desired magnitude function while allowing the algorithm to find a phase that corresponds to the optimal magnitude design. The <emphasis effect="italics">magnitude <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math></emphasis> design problem is given by</para>
+    <equation id="id313665"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msub>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mi>D</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>H</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>;</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mspace width="0.166667em"/>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mi>p</m:mi>
+          </m:msub>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id313733">where <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a real, positive function. This problem is discussed in <link target-id=""/>.</para>
+    <para id="id313756">Another problem that uses no phase information is the linear phase<m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem. It will be shown in <link target-id=""/> that this problem can be formulated so that only real functions are involved in the optimization problem (since the phase component of <m:math overflow="scroll"><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> has a specific linear form).</para>
+    <para id="id313797">An interesting case results from the idea of combining different norms in different frequency bands of a desired function <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>. One could assign different <m:math overflow="scroll"><m:mi>p</m:mi></m:math>-values for different bands (for example, minimizing the error energy (<m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mn>2</m:mn></m:msub></m:math>) in the passband while using a minimax error (<m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>∞</m:mi></m:msub></m:math>) approach in the stopband to keep control of noise). The frequency-varying <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem is formulated as follows,</para>
+    <equation id="id313871"><m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:munder>
+<m:mrow>
+            <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+    <m:mi>h</m:mi>
+</m:mrow>        
+  </m:munder>
+          <m:mspace width="0.277778em"/>
+          <m:msub>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>D</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>H</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mi>p</m:mi>
+          </m:msub>
+          <m:mo>+</m:mo>
+          <m:msub>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>D</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>H</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mi>s</m:mi>
+                    <m:mi>b</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mi>q</m:mi>
+          </m:msub>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id313974">where <m:math overflow="scroll"><m:mfenced separators="" open="{" close="}"><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mrow><m:mi>p</m:mi><m:mi>b</m:mi></m:mrow></m:msub></m:mfenced></m:math> are the passband and stopband frequency ranges respectively (and <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mo>,</m:mo><m:mi>q</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>).</para>
+    <para id="id314050">Perhaps the most relevant problem addressed in this work is the <emphasis effect="italics">Constrained Least Squares</emphasis> (<emphasis effect="bold">CLS</emphasis>) problem. In a continuous sense, a CLS problem is defined by</para>
+    <equation id="id314065"><m:math overflow="scroll" mode="display">
+        <m:mtable>
+          <m:mtr>
+            <m:mtd columnalign="left">
+              <m:munder>
+<m:mrow>
+                <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+        <m:mi>h</m:mi>
+</m:mrow>        
+      </m:munder>
+            </m:mtd>
+            <m:mtd columnalign="left">
+              <m:msub>
+                <m:mrow>
+                  <m:mo>∥</m:mo>
+                  <m:mi>d</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>∥</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msub>
+            </m:mtd>
+          </m:mtr>
+          <m:mtr>
+            <m:mtd columnalign="left">
+              <m:mrow>
+                <m:mtext>subject</m:mtext>
+                <m:mspace width="4.pt"/>
+                <m:mtext>to</m:mtext>
+              </m:mrow>
+            </m:mtd>
+            <m:mtd columnalign="left">
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>d</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>H</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+                <m:mo>|</m:mo>
+                <m:mspace width="-0.166667em"/>
+                <m:mo>≤</m:mo>
+                <m:mspace width="-0.166667em"/>
+                <m:mi>τ</m:mi>
+              </m:mrow>
+            </m:mtd>
+          </m:mtr>
+        </m:mtable>
+      </m:math>
+    </equation>
+    <para id="id314174">The idea is to minimize the error energy across all frequencies, but ensuring first that the error at each frequency does not exceed a given tolerance <m:math overflow="scroll"><m:mi>τ</m:mi></m:math>. <link target-id=""/> explains the details for this problem and shows that this type of formulation makes good sense in filter design and can efficiently be solved via IRLS methods.</para>
+    <section id="uid1">
+      <title>The IRLS algorithm and FIR literature review</title>
+      <para id="id314201">A common approach to dealing with highly structured approximation problems consists in breaking a complex problem into a series of simpler, smaller problems. Often, one can even prove important mathematical properties in this way. Consider the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> approximation problem introduced in <link target-id=""/>,</para>
+      <equation id="uid2"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msub>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id314269">For simplicity at this point we can assume that <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mrow><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow><m:mo>:</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>N</m:mi></m:msup><m:mo>↦</m:mo><m:msup><m:mi mathvariant="double-struck">R</m:mi><m:mi>M</m:mi></m:msup></m:mrow></m:math> is linear. It is relevant to mention that <link target-id="uid2"/> is equivalent to</para>
+      <equation id="uid3"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msubsup>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+              <m:mi>p</m:mi>
+            </m:msubsup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id314370">In its most basic form the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> IRLS algorithm works by rewriting <link target-id="uid3"/> into a weighted least squares problem of the form</para>
+      <equation id="uid4"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>h</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msubsup>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>w</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mn>2</m:mn>
+              <m:mn>2</m:mn>
+            </m:msubsup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id314454">Since a linear weighted least squares problem like <link target-id="uid4"/> has a closed form solution (see Appendix <link target-id=""/>), it can be solved in one step. Then the solution is used to update the weighting function, which is kept constant for the next closed form solution and so on (as discussed in <link target-id=""/>).</para>
+      <para id="id314470">One of the earlier works on the use of IRLS methods for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> approximation was written by Charles Lawson <link target-id="bid0"/>, <link target-id="bid1"/>, <link target-id="bid2"/>, in part motivated by problems that might not have a suitable <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> algorithm. He looked at a basic form of the IRLS method to solve <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> problems and extended it by proposing a multiplicative update of the weighting coefficients at each iteration (that is, <m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mrow><m:mi>k</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mi>f</m:mi><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow><m:mo>·</m:mo><m:msub><m:mi>w</m:mi><m:mi>k</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>). Lawson's method triggered a number of papers and ideas; however his method is sensitive to the weights becoming numerically zero; in this case the algorithm must restart. A number of ideas <link target-id="bid1"/>, <link target-id="bid2"/> have been proposed (some from Lawson himself) to prevent or deal with these occurrences, and in general his method is considered somewhat slow.</para>
+      <para id="id314602">John Rice and Karl Usow <link target-id="bid1"/>, <link target-id="bid3"/> extended Lawson's method to the general <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem (<m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>) by developing an algorithm based on Lawson's that also updates the weights in a multiplicative form. They used the results from Theorem <link target-id=""/> by Motzkin and Walsh <link target-id="bid4"/>, <link target-id="bid5"/> to guarantee that a solution indeed exists for the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem. They defined</para>
+      <equation id="id314686">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>w</m:mi>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msubsup>
+              <m:mi>w</m:mi>
+              <m:mi>k</m:mi>
+              <m:mi>α</m:mi>
+            </m:msubsup>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:msub>
+                  <m:mi>ϵ</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mi>β</m:mi>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id314761">where</para>
+      <equation id="id314767">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>α</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>γ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>γ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id314816">and</para>
+      <equation id="id314822">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>β</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mi>α</m:mi>
+              <m:mrow>
+                <m:mn>2</m:mn>
+                <m:mi>γ</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mn>2</m:mn>
+                <m:mo>(</m:mo>
+                <m:mi>γ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id314882">with <m:math overflow="scroll"><m:mi>γ</m:mi></m:math> being a convergence parameter and <m:math overflow="scroll"><m:mrow><m:mi>ϵ</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>d</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>-</m:mo><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>. The rest of the algorithm works the same way as the basic IRLS method; however the proper selection of <m:math overflow="scroll"><m:mi>γ</m:mi></m:math> could allow for strong convergence (note that for <m:math overflow="scroll"><m:mrow><m:mi>γ</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math> we obtain the basic IRLS algorithm).</para>
+      <para id="id314962">Another approach to solve <link target-id="uid2"/> consists in a <emphasis effect="italics">partial updating</emphasis> strategy of the <emphasis effect="italics">filter coefficients</emphasis> rather than the <emphasis effect="italics">weights</emphasis>, by using a temporary coefficient vector defined by</para>
+      <equation id="uid5"><m:math overflow="scroll" mode="display">
+       
+            <m:msub>
+<m:mrow>
+<m:mstyle displaystyle="true">              
+<m:mover accent="false">   
+             <m:mi>a</m:mi>
+                <m:mo>^</m:mo>
+              </m:mover>
+</m:mstyle>
+</m:mrow>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:msup>
+                  <m:mi mathvariant="bold">C</m:mi>
+                  <m:mi>T</m:mi>
+                </m:msup>
+                <m:msubsup>
+                  <m:mi mathvariant="bold">W</m:mi>
+                  <m:mi>k</m:mi>
+                  <m:mi>T</m:mi>
+                </m:msubsup>
+                <m:msub>
+                  <m:mi mathvariant="bold">W</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mi mathvariant="bold">C</m:mi>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msup>
+            <m:msup>
+              <m:mi mathvariant="bold">C</m:mi>
+              <m:mi>T</m:mi>
+            </m:msup>
+            <m:msubsup>
+              <m:mi mathvariant="bold">W</m:mi>
+              <m:mi>k</m:mi>
+              <m:mi>T</m:mi>
+            </m:msubsup>
+            <m:msub>
+              <m:mi mathvariant="bold">W</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+            <m:msub>
+              <m:mi>A</m:mi>
+              <m:mi>d</m:mi>
+            </m:msub>
+        </m:math>
+      </equation>
+      <para id="id315114">The filter coefficients after each iteration are then calculated by</para>
+      <equation id="uid6"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>λ</m:mi>
+            <m:msub>
+              <m:mover accent="true">
+                <m:mi>a</m:mi>
+                <m:mo>^</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>+</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>-</m:mo>
+              <m:mi>λ</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id315193">where <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> is a <emphasis effect="italics">convergence parameter</emphasis> (with <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>λ</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mn>1</m:mn></m:mrow></m:math>). This approach is known as the Karlovitz method <link target-id="bid6"/>, and it has been claimed that it converges to the global optimal solution for <emphasis effect="bold">even</emphasis> values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> such that <m:math overflow="scroll"><m:mrow><m:mn>4</m:mn><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>. However, in practice several convergence problems have been found even under such assumptions. One drawback is that the convergence parameter <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> has to be optimized at each iteration via an expensive line search process. Therefore the overall execution time becomes rather large.</para>
+      <para id="id315312">S. W. Kahng <link target-id="bid7"/> developed an algorithm based on Newton-Raphson's method that uses</para>
+      <equation id="uid7">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>λ</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mn>1</m:mn>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id315351">to get</para>
+      <equation id="uid8">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msub>
+                  <m:mover accent="true">
+                    <m:mi>a</m:mi>
+                    <m:mo>^</m:mo>
+                  </m:mover>
+                  <m:mrow>
+                    <m:mi>k</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>+</m:mo>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>2</m:mn>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:msub>
+                  <m:mi>a</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id315438">This selection for <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> is based upon Newton's method to minimize <m:math overflow="scroll"><m:mi>ϵ</m:mi></m:math> (the same result was derived independently by Fletcher, Grant and Hebden <link target-id="bid8"/>). The rest of the algorithm follows Karlovitz's approach; however since <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> is fixed there is no need to perform the linear search for its best value. Since Kahng's method is based on Newton's method, it converges quadratically to the optimal solution. Kahng proved that his method converges for all cases of <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> and for any problem (at least in theory). It can be seen that Kahng's method is a particular case of Karlovitz's algorithm, with <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> as defined in <link target-id="uid7"/>. Newton-Raphson based algorithms are not warranted to converge to the optimal solution unless they are somewhat close to the solution since they require to know and invert the Hessian matrix of the objective function (which must be <emphasis effect="italics">positive definite</emphasis><space count="4"/> <link target-id="bid9"/>). However, their associated quadratic convergence makes them an appealing option.</para>
+      <para id="id315517">Burrus, Barreto and Selesnick developed a method <link target-id="bid3"/>, <link target-id="bid10"/>, <link target-id="bid11"/> that combines the powerful quadratic convergence of Newton's methods with the robust initial convergence of the basic IRLS method, thus overcoming the initial sensitivity of Newton-based algorithms and the slow linear convergence of Lawson-based methods. To accelerate initial convergence, their approach to solve <link target-id="uid2"/> uses <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mi>σ</m:mi><m:mo>*</m:mo><m:mn>2</m:mn></m:mrow></m:math>, where <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> is a convergence parameter (with <m:math overflow="scroll"><m:mrow><m:mn>1</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>σ</m:mi><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mn>2</m:mn></m:mrow></m:math>). At any given iteration, <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases its value by a factor of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math>. This is done at each iteration, so to satisfy</para>
+      <equation id="uid9">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>p</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mtext>min</m:mtext>
+            <m:mspace width="0.277778em"/>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:msub>
+                <m:mi>p</m:mi>
+                <m:mrow>
+                  <m:mi>d</m:mi>
+                  <m:mi>e</m:mi>
+                  <m:mi>s</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mo>,</m:mo>
+              <m:mi>σ</m:mi>
+              <m:mo>·</m:mo>
+              <m:msub>
+                <m:mi>p</m:mi>
+                <m:mrow>
+                  <m:mi>k</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:msub>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id315695">where <m:math overflow="scroll"><m:msub><m:mi>p</m:mi><m:mrow><m:mi>d</m:mi><m:mi>e</m:mi><m:mi>s</m:mi></m:mrow></m:msub></m:math> corresponds to the desired <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norm. The implementation of each iteration follows Karlovitz's method using the particular selection of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> given by <link target-id="uid9"/>.</para>
+      <figure id="uid10"><media id="uid10_media" alt="There are two line segments. One is a ridgid thin zig-zag line. The other is a smooth bold curve. The second is an approximation of the zig-zag. There are six points on the line labeled l_2, l_2σ, l_2σ^2, l_2σ^3, l_2σ^4 and l_p_des.">
+          <image mime-type="image/png" src="../../media/homotopy-1c17.png" id="uid10_onlineimage" width="577" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 577. --></image>
+         </media>
+        
+      <caption>Homotopy approach for IRLS <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> filter design.</caption></figure>
+      <para id="id315778">It is worth noting that the method outlined above combines several ideas into a powerful approach. By not solving the desired <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem from the first iteration, one avoids the potential issues of Newton-based methods where convergence is guaranteed within a radius of convergence. It is well known that for <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math> there exists a continuum of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solutions (as shown in <link target-id="uid10"/>). By slowly increasing <m:math overflow="scroll"><m:mi>p</m:mi></m:math> from iteration to iteration one hopes to follow the continuum of solutions from <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> towards the desired <m:math overflow="scroll"><m:mi>p</m:mi></m:math>. By choosing a reasonable <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> the method can only spend one iteration at any given <m:math overflow="scroll"><m:mi>p</m:mi></m:math> and still remain close enough to the optimal path. Once the algorithm reaches a neighborhood of the desired <m:math overflow="scroll"><m:mi>p</m:mi></m:math>, it can be allowed to iterate at such <m:math overflow="scroll"><m:mi>p</m:mi></m:math>, in order to converge to the optimal solution. This process is analogous to <emphasis effect="italics">homotopy</emphasis>, a commonly used family of optimization methods <link target-id="bid12"/>.</para>
+      <para id="id315930">While <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> designs offer meaningful approaches to filter design, the Constrained Least Squares (CLS) problem offers an interesting tradeoff to both approaches <link target-id="bid13"/>. In the context of filter design, the CLS problem seems to be first presented by John Adams <link target-id="bid14"/> in 1991. The problem Adams posed is a <emphasis effect="italics">Quadratic Programming</emphasis> (QP) problem, well suited for off-the-shelf QP tools like those based on Lagrange multiplier theory <link target-id="bid14"/>. However, Adams posed the problem in such a way that a transition band is required (as shown in <link target-id="uid11"/>). Burrus et al. presented a formulation <link target-id="bid15"/>, <link target-id="bid16"/>, <link target-id="bid17"/> where only a <emphasis effect="italics">transition frequency</emphasis> is required; the transition band is <emphasis effect="italics">induced</emphasis>; it does indeed exist but is not specified (it adjusts itself optimally according to the constraint specifications). The method by Burrus et al. is based on Lagrange multipliers and the Karush-Kuhn-Tucker (KKT) conditions.</para>
+      <figure id="uid11"><media id="uid11_media" alt="A graph with a horizontal and vertical line that intersect perpendicularly. Along the horizontal line there are two vertical dashed lines that essentially form three sections along the line labeled from left to right passband, transition band, and stopband. Another line originates at the upper portion of the vertical line, proceeds parallel to the horizontal line til it hits the first dashed line. Then the line proceeds diagonally til it hits the horizontal line and continues on top of the horizontal line. ">
+          <image mime-type="image/png" src="../../media/cls_model-7454.png" id="uid11_onlineimage" width="252" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 252. --></image>
+         </media>
+        
+      <caption>Lowpass filter showing transition band.</caption></figure>
+      <para id="id316037">An alternative to the KKT-based method mentioned above is the use of IRLS methods where a suitable weighting function serves as the constraining function over frequencies that exceed the constraint tolerance. Otherwise no weights are used, effectively forcing a least-squares solution. While this idea has been suggested by Burrus et al., one of the main contributions of this work is a thorough investigation of this approach, as well as proper documentation of numerical results, theoretical findings and proper code.</para>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid14">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Adams, John W.</bib:author>
+        <bib:title>FIR Digital Filters with Least-Squares Stopbands Subject to Peak-Gain Constraints</bib:title>
+        <bib:journal>IEEE Trans. on Circuits and Systems</bib:journal>
+        <bib:year>1991</bib:year>
+        <!--optional fields-->
+        <bib:volume>39</bib:volume>
+        <bib:number>4</bib:number>
+        <bib:pages>376-388</bib:pages>
+        <bib:month>April</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid9">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Aoki, Masanao</bib:author>
+        <bib:title>Introduction to Optimization Techniques</bib:title>
+        <bib:publisher>The Macmillan Company</bib:publisher>
+        <bib:year>1971</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid13">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Adams, John W. and Sullivan, James L.</bib:author>
+        <bib:title>Peak-Constrained Least-Squares Optimization</bib:title>
+        <bib:journal>IEEE Trans. on Signal Processing</bib:journal>
+        <bib:year>1998</bib:year>
+        <!--optional fields-->
+        <bib:volume>46</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>306-321</bib:pages>
+        <bib:month>Febr.</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid10">
+      <bib:mastersthesis>
+        <!--required fields-->
+        <bib:author>Barreto, Jose A.</bib:author>
+        <bib:title><!--no math allowed in bib entries--> Approximation by the Iterative Reweighted Least Squares Method and the Design of Digital FIR Filters in One Dimension</bib:title>
+        <bib:school>Rice University</bib:school>
+        <bib:year>1992</bib:year>
+        <!--optional fields-->
+        <bib:type>Masters thesis</bib:type>
+        <bib:address/>
+        <bib:month/>
+        <bib:note/>
+      </bib:mastersthesis>
+    </bib:entry>
+    <bib:entry id="bid11">
+      <bib:inproceedings>
+        <!--required fields-->
+        <bib:author>Burrus, C. S. and Barreto, J. A.</bib:author>
+        <bib:title>Least p-power Error Design of FIR Filters</bib:title>
+        <bib:booktitle>Proc. IEEE Int. Symp. Circuits, Syst. ISCAS-92</bib:booktitle>
+        <bib:year>1992</bib:year>
+        <!--optional fields-->
+        <bib:editor/>
+        <bib:volume>2</bib:volume>
+        <bib:series/>
+        <bib:pages>545-548</bib:pages>
+        <bib:address>San Diego, CA</bib:address>
+        <bib:month>May</bib:month>
+        <bib:organization/>
+        <bib:publisher/>
+        <bib:note/>
+      </bib:inproceedings>
+    </bib:entry>
+    <bib:entry id="bid3">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Burrus, C. S. and Barreto, J. A. and Selesnick, I. W.</bib:author>
+        <bib:title>Iterative Reweighted Least-Squares Design of FIR Filters</bib:title>
+        <bib:journal>IEEE Transactions on Signal Processing</bib:journal>
+        <bib:year>1994</bib:year>
+        <!--optional fields-->
+        <bib:volume>42</bib:volume>
+        <bib:number>11</bib:number>
+        <bib:pages>2926-2936</bib:pages>
+        <bib:month>November</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid8">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Fletcher, R. and Grant, J. A. and Hebden, M. D.</bib:author>
+        <bib:title>The Calculation of Linear Best <!--no math allowed in bib entries--> Approximations</bib:title>
+        <bib:journal>The Computer Journal</bib:journal>
+        <bib:year>1972</bib:year>
+        <!--optional fields-->
+        <bib:volume>14</bib:volume>
+        <bib:number>118</bib:number>
+        <bib:pages>276-279</bib:pages>
+        <bib:month>Apr</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid7">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Kahng, S. W.</bib:author>
+        <bib:title>Best <!--no math allowed in bib entries--> Approximations</bib:title>
+        <bib:journal>Mathematics of Computation</bib:journal>
+        <bib:year>1972</bib:year>
+        <!--optional fields-->
+        <bib:volume>26</bib:volume>
+        <bib:number>118</bib:number>
+        <bib:pages>505-508</bib:pages>
+        <bib:month>April</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid6">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Karlovitz, L. A.</bib:author>
+        <bib:title>Construction of Nearest Points in the L^p, p even and L^∞ norms, I.</bib:title>
+        <bib:journal>Journal of Approximation Theory</bib:journal>
+        <bib:year>1970</bib:year>
+        <!--optional fields-->
+        <bib:volume>3</bib:volume>
+        <bib:number/>
+        <bib:pages>123-127</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:phdthesis>
+        <!--required fields-->
+        <bib:author>Lawson, C. L.</bib:author>
+        <bib:title>Contributions to the Theory of Linear Least Maximum Approximations</bib:title>
+        <bib:school>UCLA</bib:school>
+        <bib:year>1961</bib:year>
+        <!--optional fields-->
+        <bib:type>Ph.D. Thesis</bib:type>
+        <bib:address/>
+        <bib:month/>
+        <bib:note/>
+      </bib:phdthesis>
+    </bib:entry>
+    <bib:entry id="bid16">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Lang, Markus and Selesnick, Ivan W. and Burrus, Charles S.</bib:author>
+        <bib:title>Constrained Least Square Design of 2-D FIR Filters</bib:title>
+        <bib:journal>IEEE Transactions on Signal Processing</bib:journal>
+        <bib:year>1996</bib:year>
+        <!--optional fields-->
+        <bib:volume>44</bib:volume>
+        <bib:number>5</bib:number>
+        <bib:pages>1234-1241</bib:pages>
+        <bib:month>May</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid5">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Motzkin, T. S. and Walsh, J. L.</bib:author>
+        <bib:title>Polynomials of Best Approximation on a Real Finite Point Set I</bib:title>
+        <bib:journal>Trans. American Mathematical Society</bib:journal>
+        <bib:year>1959</bib:year>
+        <!--optional fields-->
+        <bib:volume>91</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>231-245</bib:pages>
+        <bib:month>May</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid12">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Nocedal, Jorge and Wright, Stephen J.</bib:author>
+        <bib:title>Numerical Optimization</bib:title>
+        <bib:publisher>Springer-Verlag</bib:publisher>
+        <bib:year>1999</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series>Springer series in operations research</bib:series>
+        <bib:address>New York, NY</bib:address>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid2">
+      <bib:inbook>
+        <!--required fields-->
+        <bib:author>Rice, John R.</bib:author>
+        <bib:title>The Approximation of Functions</bib:title>
+        <bib:chapter>13.11</bib:chapter>
+        <bib:pages/>
+        <bib:publisher>Addison-Wesley</bib:publisher>
+        <bib:year>1964</bib:year>
+        <!--optional fields-->
+        <bib:volume>2</bib:volume>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:inbook>
+    </bib:entry>
+    <bib:entry id="bid1">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Rice, John R. and Usow, Karl H.</bib:author>
+        <bib:title>The Lawson Algorithm and Extensions</bib:title>
+        <bib:journal>Mathematics of Computation</bib:journal>
+        <bib:year>1968</bib:year>
+        <!--optional fields-->
+        <bib:volume>22</bib:volume>
+        <bib:number/>
+        <bib:pages>118-127</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid15">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Selesnick, Ivan W. and Lang, Markus and Burrus, Charles S.</bib:author>
+        <bib:title>Constrained Least Square Design of FIR Filters without Specified Transition Bands</bib:title>
+        <bib:journal>IEEE Transactions on Signal Processing</bib:journal>
+        <bib:year>1996</bib:year>
+        <!--optional fields-->
+        <bib:volume>44</bib:volume>
+        <bib:number>8</bib:number>
+        <bib:pages>1879-1892</bib:pages>
+        <bib:month>August</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid17">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Selesnick, Ivan W. and Lang, Markus and Burrus, Charles S.</bib:author>
+        <bib:title>A Modified Algorithm for Constrained Least Square Design of Multiband FIR Filters Without Specified Transition Bands</bib:title>
+        <bib:journal>IEEE Transactions on Signal Processing</bib:journal>
+        <bib:year>1998</bib:year>
+        <!--optional fields-->
+        <bib:volume>46</bib:volume>
+        <bib:number>2</bib:number>
+        <bib:pages>497-501</bib:pages>
+        <bib:month>Feb.</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid4">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Walsh, J. L. and Motzkin, T. S.</bib:author>
+        <bib:title>Polynomials of Best Approximation on an Interval</bib:title>
+        <bib:journal>Proceeedings of the National Academy of Sciences, USA</bib:journal>
+        <bib:year>1959</bib:year>
+        <!--optional fields-->
+        <bib:volume>45</bib:volume>
+        <bib:number/>
+        <bib:pages>1523-1528</bib:pages>
+        <bib:month>October</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+  </bib:file>
+</document>

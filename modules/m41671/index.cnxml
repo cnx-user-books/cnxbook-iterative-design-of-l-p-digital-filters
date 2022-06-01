@@ -1,0 +1,2068 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Linear phase l_p filter design</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41671</md:content-id>
+  <md:title>Linear phase l_p filter design</md:title>
+  <md:abstract/>
+  <md:uuid>ba092242-b08d-4448-a51a-25bf8756c798</md:uuid>
+</metadata>
+
+<content>
+    <para id="id127668">Linear phase FIR filters are important tools in signal processing. As will be shown below, they do not require the user to specify a phase response in their design (since the assumption is that the desired phase response is indeed linear). Besides, they satisfy a number of symmetry properties that allow for the reduction of dimensions in the optimization process, making them easier to design computationally. Finally, there are applications where a linear phase is desired as such behavior is more physically meaningful.</para>
+    <section id="uid1"><title>Four types of linear phase filters</title><para id="id127684">The frequency response of an FIR filter <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is given by</para>
+      <equation id="id127703"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>ω</m:mi>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id128287">In general, <m:math overflow="scroll"><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>R</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo><m:mo>+</m:mo><m:mi>j</m:mi><m:mi>I</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a periodic complex function of <m:math overflow="scroll"><m:mi>ω</m:mi></m:math> (with period <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>). Therefore it can be written as follows,</para>
+      <equation id="uid2">
+        <m:math overflow="scroll" mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mo>=</m:mo>
+                  <m:mi>R</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>+</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mi>I</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mo>=</m:mo>
+                  <m:mi>A</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>φ</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id128443">
+where the <emphasis effect="italics">magnitude</emphasis> response is given by</para>
+      <equation id="uid3">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>A</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msqrt>
+              <m:mrow>
+                <m:mi>R</m:mi>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mo>+</m:mo>
+                <m:mi>I</m:mi>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+            </m:msqrt>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id128529">and the <emphasis effect="italics">phase</emphasis> response is</para>
+      <equation id="id128539">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>φ</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mtext>sin</m:mtext>
+            <m:mfenced separators="" open="(" close=")">
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>I</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>R</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id128592">However <m:math overflow="scroll"><m:mrow><m:mi>A</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is not analytic and <m:math overflow="scroll"><m:mrow><m:mi>φ</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is not continuous. From a computational point of view <link target-id="uid2"/> would have better properties if both <m:math overflow="scroll"><m:mrow><m:mi>A</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>φ</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> were continuous analytic functions of <m:math overflow="scroll"><m:mi>ω</m:mi></m:math>; an important class of filters for which this is true is the class of <emphasis effect="italics">linear phase</emphasis> filters <space count="1"/> <link target-id="bid0"/>.</para>
+      <para id="id128683">Linear phase filters have a frequency response of the form</para>
+      <equation id="uid4">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>A</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mi>φ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id128738">where <m:math overflow="scroll"><m:mrow><m:mi>A</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is the real, continuous <emphasis effect="italics">amplitude</emphasis> response of <m:math overflow="scroll"><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> and</para>
+      <equation id="id128779">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>φ</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msub>
+              <m:mi>K</m:mi>
+              <m:mn>1</m:mn>
+            </m:msub>
+            <m:mo>+</m:mo>
+            <m:msub>
+              <m:mi>K</m:mi>
+              <m:mn>2</m:mn>
+            </m:msub>
+            <m:mi>ω</m:mi>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id128819">is a <emphasis effect="bold">linear</emphasis> phase function in <m:math overflow="scroll"><m:mi>ω</m:mi></m:math> (hence the name); <m:math overflow="scroll"><m:msub><m:mi>K</m:mi><m:mn>1</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>K</m:mi><m:mn>2</m:mn></m:msub></m:math> are constants. <link target-id="uid5"/> shows the frequency response for a linear phase FIR filter. The jumps in the phase response correspond to sign reversals in the magnitude resulting as defined in <link target-id="uid3"/>.</para>
+      <figure id="uid5"><media id="uid5_media" alt="This image contains four separate graphs. The two on the left demonstrate magnitude and phase responses and the two right graphs demonstrate amplitude and linear phase responses.">
+          <image mime-type="image/png" src="../../media/linphase.png" id="uid5_onlineimage" width="488" print-width="4in"><!-- NOTE: attribute width changes image size online (pixels). original width is 488. --></image>
+            </media>
+        
+      <caption>Frequency response of a linear phase FIR filter. Left: magnitude and phase responses. Right: amplitude and linear phase responses.</caption></figure>
+      <para id="id128888">Consider a length-<m:math overflow="scroll"><m:mi>N</m:mi></m:math> FIR filter (assume for the time being that <m:math overflow="scroll"><m:mi>N</m:mi></m:math> is odd). Its frequency response is given by</para>
+      <equation id="uid6"><m:math overflow="scroll" mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="center">
+                <m:mrow>
+                  <m:mo>=</m:mo>
+</m:mrow>
+</m:mtd>
+<m:mtd columnalign="left">
+<m:mrow>
+                  <m:munderover>
+                    <m:mrow><m:mo>∑</m:mo></m:mrow>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right"/>
+              <m:mtd columnalign="center">
+                
+                <m:mrow>
+                  
+                  <m:mo>=</m:mo>
+</m:mrow>
+</m:mtd>
+<m:mtd columnalign="left">
+<m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>M</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:munderover>
+                    <m:mrow><m:mo>∑</m:mo></m:mrow>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mn>2</m:mn>
+                      <m:mi>M</m:mi>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>M</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mi>n</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id129062">
+where <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mfrac><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow><m:mn>2</m:mn></m:mfrac></m:mrow></m:math>. Equation <link target-id="uid6"/> can be written as follows,</para>
+      <equation id="uid7">
+        <m:math overflow="scroll" mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>M</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mi>h</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mn>0</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>M</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>+</m:mo>
+                  <m:mo>...</m:mo>
+                  <m:mo>+</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>M</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>+</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>M</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>+</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>M</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd/>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mspace width="2.em"/>
+                  <m:mspace width="2.em"/>
+                  <m:mspace width="2.em"/>
+                  <m:mspace width="2.em"/>
+                  <m:mo>+</m:mo>
+                  <m:mo>...</m:mo>
+                  <m:mo>+</m:mo>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mn>2</m:mn>
+                    <m:mi>M</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>M</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mrow>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id129298">It is clear that for an odd-length FIR filter to have the linear phase form described in <link target-id="uid4"/>, the term inside braces in <link target-id="uid7"/> must be a real function (thus becoming <m:math overflow="scroll"><m:mrow><m:mi>A</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math>). By imposing even symmetry on the filter coefficients about the midpoint (<m:math overflow="scroll"><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mi>M</m:mi></m:mrow></m:math>), that is</para>
+      <equation id="id129342">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>h</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>k</m:mi>
+            <m:mo>)</m:mo>
+            <m:mo>=</m:mo>
+            <m:mi>h</m:mi>
+            <m:mo>(</m:mo>
+            <m:mn>2</m:mn>
+            <m:mi>M</m:mi>
+            <m:mo>-</m:mo>
+            <m:mi>k</m:mi>
+            <m:mo>)</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id129376"><link target-id="uid7"/> becomes</para>
+      <equation id="uid8"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>ω</m:mi>
+                <m:mi>M</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mfenced separators="" open="[" close="]">
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>M</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>+</m:mo>
+              <m:mn>2</m:mn>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>M</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mtext>cos</m:mtext>
+              <m:mi>ω</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>M</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id129495">Similarly, with odd symmetry (i.e. <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>h</m:mi><m:mo>(</m:mo><m:mn>2</m:mn><m:mi>M</m:mi><m:mo>-</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>) equation <link target-id="uid7"/> becomes</para>
+      <equation id="uid9"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mo>(</m:mo>
+                <m:mfrac>
+                  <m:mi>π</m:mi>
+                  <m:mn>2</m:mn>
+                </m:mfrac>
+                <m:mo>-</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mi>M</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:msup>
+            <m:mn>2</m:mn>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>M</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+<m:msup>
+            <m:mtext>tan</m:mtext>
+<m:mo>-1</m:mo>
+</m:msup>
+            <m:mi>ω</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>M</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id129638">Note that the term <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>M</m:mi><m:mo>)</m:mo></m:mrow></m:math> disappears as the symmetry condition requires that</para>
+      <equation id="id129659">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>h</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>M</m:mi>
+            <m:mo>)</m:mo>
+            <m:mo>=</m:mo>
+            <m:mi>h</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>N</m:mi>
+            <m:mo>-</m:mo>
+            <m:mi>M</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>1</m:mn>
+            <m:mo>)</m:mo>
+            <m:mo>=</m:mo>
+            <m:mo>-</m:mo>
+            <m:mi>h</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>M</m:mi>
+            <m:mo>)</m:mo>
+            <m:mo>=</m:mo>
+            <m:mn>0</m:mn>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id129712">Similar expressions can be obtained for an even-length FIR filter,</para>
+      <equation id="uid10">
+        <m:math overflow="scroll" mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>M</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mfrac>
+                        <m:mi>N</m:mi>
+                        <m:mn>2</m:mn>
+                      </m:mfrac>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>M</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mi>n</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id129881">It is clear that depending on the combinations of <m:math overflow="scroll"><m:mi>N</m:mi></m:math> and the symmetry of <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, it is possible to obtain four types of filters <link target-id="bid0"/>, <link target-id="bid1"/>, <link target-id="bid2"/>. <link target-id="uid11"/> shows the four possible linear phase FIR filters described by <link target-id="uid4"/>.</para>
+      <table id="uid11" summary="This table compares the even and odd symmetries of both N Odd and N Even linear phase FIR filters. The table shows the equations for each of these four filters."><tgroup cols="3"><tbody>
+            <row>
+              <entry morerows="1" valign="middle">N Odd</entry>
+              <entry valign="middle">Even Symmetry</entry>
+              <entry>
+                <m:math overflow="scroll">
+                  <m:mtable>
+                    <m:mtr>
+                      <m:mtd columnalign="right">
+                        <m:mrow>
+                          <m:mi>A</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="center">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mstyle scriptlevel="0" displaystyle="true">
+                          <m:mrow>
+                            <m:mi>h</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>M</m:mi>
+                              <m:mo>)</m:mo>
+<m:mo>+</m:mo>
+                            </m:mrow>
+<m:mn>2</m:mn>
+                            <m:munderover>
+                              <m:mo>∑</m:mo>
+                              <m:mrow>
+                                <m:mi>n</m:mi>
+                                <m:mo>=</m:mo>
+                                <m:mn>0</m:mn>
+                              </m:mrow>
+                              <m:mrow>
+                                <m:mi>M</m:mi>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                              </m:mrow>
+                            </m:munderover>
+                            <m:mi>h</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+<m:mo>⋅</m:mo>
+                            </m:mrow>
+                           </m:mrow>
+</m:mstyle>
+                           </m:mtd>
+                    </m:mtr>
+<m:mtr>
+<m:mtd/>
+<m:mtd/>
+<m:mtd columnalign="left">
+<m:mstyle scriptlevel="0" displaystyle="true">
+<m:mrow>
+                            
+                            
+                            <m:mtext>cos</m:mtext>
+                            <m:mi>ω</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>M</m:mi>
+                              <m:mo>-</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mstyle>
+                      </m:mtd>
+</m:mtr>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>φ</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mi>M</m:mi>
+                        </m:mrow>
+                      </m:mtd>
+                    </m:mtr>
+                  </m:mtable>
+                </m:math>
+              </entry>
+            </row>
+            <row>
+             
+              <entry valign="middle">Odd Symmetry</entry>
+              <entry>
+               <m:math overflow="scroll">
+                  <m:mtable>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>A</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mstyle scriptlevel="0" displaystyle="true">
+                          <m:mrow>
+                            <m:mn>2</m:mn>
+                            <m:munderover>
+                              <m:mo>∑</m:mo>
+                              <m:mrow>
+                                <m:mi>n</m:mi>
+                                <m:mo>=</m:mo>
+                                <m:mn>0</m:mn>
+                              </m:mrow>
+                              <m:mrow>
+                                <m:mi>M</m:mi>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                              </m:mrow>
+                            </m:munderover>
+                            <m:mi>h</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+                              <m:mo>⋅</m:mo>
+                            </m:mrow>
+                            </m:mrow>
+                            </m:mstyle>
+                        </m:mtd>
+                    </m:mtr>
+                    <m:mtr>
+                        <m:mtd/>
+                        <m:mtd/>
+                        <m:mtd columnalign="left">
+                        	<m:mstyle scriptlevel="0" displaystyle="true">
+                        	<m:mrow>
+                            <m:mtext>sin</m:mtext>
+                            <m:mi>ω</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>M</m:mi>
+                              <m:mo>-</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mstyle>
+                      </m:mtd>
+                    </m:mtr>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>φ</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mfrac>
+                            <m:mi>π</m:mi>
+                            <m:mn>2</m:mn>
+                          </m:mfrac>
+                          <m:mo>-</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mi>M</m:mi>
+                        </m:mrow>
+                      </m:mtd>
+                    </m:mtr>
+                  </m:mtable>
+                </m:math>
+             
+              </entry>
+            </row>
+            <row>
+              <entry morerows="1" valign="middle">N Even</entry>
+              <entry valign="middle">Even Symmetry</entry>
+              <entry>
+                <m:math overflow="scroll">
+                  <m:mtable>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>A</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mstyle scriptlevel="0" displaystyle="true">
+                          <m:mrow>
+                            <m:mi>h</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>M</m:mi>
+                              <m:mo>)</m:mo>
+                              <m:mo>+</m:mo>
+                            </m:mrow>
+                        	</m:mrow>
+<m:mn>2</m:mn>
+                            <m:munderover>
+                              <m:mrow><m:mo>∑</m:mo></m:mrow>
+                              <m:mrow>
+                                <m:mi>n</m:mi>
+                                <m:mo>=</m:mo>
+                                <m:mn>0</m:mn>
+                              </m:mrow>
+<m:mrow>
+                                <m:mfrac>
+                                  <m:mi>N</m:mi>
+                                  <m:mn>2</m:mn>
+                                </m:mfrac>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                              </m:mrow>
+                            </m:munderover>
+<m:mi>h</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+<m:mo>⋅</m:mo>
+                            </m:mrow>
+                        </m:mstyle>
+                        </m:mtd>
+                    </m:mtr>
+                    <m:mtr>
+                    	<m:mtd/>
+                    	<m:mtd/>
+                    	<m:mtd columnalign="left">
+                    		<m:mstyle scriptlevel="0" displaystyle="true">
+                    		<m:mrow>
+                            
+                              
+                            
+                            <m:mtext>cos</m:mtext>
+                            <m:mi>ω</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>M</m:mi>
+                              <m:mo>-</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mstyle>
+                      </m:mtd>
+                    </m:mtr>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>φ</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mi>M</m:mi>
+                        </m:mrow>
+                      </m:mtd>
+                    </m:mtr>
+                  </m:mtable>
+                </m:math>
+              </entry>
+            </row>
+            <row>
+              
+              <entry valign="middle">Odd Symmetry</entry>
+              <entry>
+                <m:math overflow="scroll">
+                  <m:mtable>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>d</m:mi>
+                          <m:mi>A</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mstyle scriptlevel="0" displaystyle="true">
+                          <m:mrow>
+                            <m:mn>2</m:mn>
+                            <m:munderover>
+                              <m:mo>∑</m:mo>
+                              <m:mrow>
+                                <m:mi>n</m:mi>
+                                <m:mo>=</m:mo>
+                                <m:mn>0</m:mn>
+                              </m:mrow>
+                              <m:mrow>
+                                <m:mfrac>
+                                  <m:mi>N</m:mi>
+                                  <m:mn>2</m:mn>
+                                </m:mfrac>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                              </m:mrow>
+                            </m:munderover>
+                            <m:mi>h</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+                              <m:mo>⋅</m:mo>
+                            </m:mrow>
+                            </m:mrow>
+                        </m:mstyle>
+                    </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                	<m:mtd/>
+                	<m:mtd/>
+                	<m:mtd columnalign="left">
+                	<m:mstyle scriptlevel="0" displaystyle="true">
+                	<m:mrow>
+                            <m:mtext>sin</m:mtext>
+                            <m:mi>ω</m:mi>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>M</m:mi>
+                              <m:mo>-</m:mo>
+                              <m:mi>n</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mstyle>
+                      </m:mtd>
+                    </m:mtr>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mi>φ</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mo>=</m:mo>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mfrac>
+                            <m:mi>π</m:mi>
+                            <m:mn>2</m:mn>
+                          </m:mfrac>
+                          <m:mo>-</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mi>M</m:mi>
+                        </m:mrow>
+                      </m:mtd>
+                    </m:mtr>
+                  </m:mtable>
+                </m:math>
+              </entry>
+            </row>
+          </tbody>
+        
+</tgroup>
+<caption>The four types of linear phase FIR filters.</caption></table>
+    </section>
+    <section id="uid12">
+      <title>IRLS-based methods</title>
+      <para id="id130588"><link target-id="uid1"/> introduced linear phase filters in detail. In this section we cover the use of IRLS methods to design linear phase FIR filters according to the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> optimality criterion. Recall from <link target-id="uid1"/> that for any of the four types of linear phase filters their frequency response can be expressed as</para>
+      <equation id="id130618">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>A</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>K</m:mi>
+                  <m:mn>1</m:mn>
+                </m:msub>
+                <m:mo>+</m:mo>
+                <m:msub>
+                  <m:mi>K</m:mi>
+                  <m:mn>2</m:mn>
+                </m:msub>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id130681">Since <m:math overflow="scroll"><m:mrow><m:mi>A</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a real continuous function as defined by <link target-id="uid11"/>, one can write the linear phase <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> design problem as follows</para>
+      <equation id="uid13"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>a</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:msubsup>
+              <m:mrow>
+                <m:mo>∥</m:mo>
+                <m:mi>D</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>A</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>;</m:mo>
+                  <m:mi>a</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>∥</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+              <m:mi>p</m:mi>
+            </m:msubsup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id130794">where <m:math overflow="scroll"><m:mi>a</m:mi></m:math> relates to <m:math overflow="scroll"><m:mi>h</m:mi></m:math> by considering the symmetry properties outlined in <link target-id="uid11"/>. Note that the two objects from the objective function inside the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> norm are real. By sampling <link target-id="uid13"/> one can write the design problem as follows</para>
+      <equation id="id130842"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>a</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:munder>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+      <m:mi>k</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>D</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mi>k</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>A</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mi>k</m:mi>
+                  </m:msub>
+                  <m:mo>;</m:mo>
+                  <m:mi>a</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id130922">or</para>
+      <equation id="uid14"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>a</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:munder>
+<m:mrow>         
+     <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+      <m:mi>k</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:msub>
+                  <m:mi>D</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>-</m:mo>
+                <m:msub>
+                  <m:mi>C</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mi>a</m:mi>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mi>p</m:mi>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id130996">where <m:math overflow="scroll"><m:msub><m:mi>D</m:mi><m:mi>k</m:mi></m:msub></m:math> is the <m:math overflow="scroll"><m:mi>k</m:mi></m:math>-th element of the vector <m:math overflow="scroll"><m:mi>D</m:mi></m:math> representing the sampled desired frequency response <m:math overflow="scroll"><m:mrow><m:mi>D</m:mi><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math>, and <m:math overflow="scroll"><m:msub><m:mi>C</m:mi><m:mi>k</m:mi></m:msub></m:math> is the <m:math overflow="scroll"><m:mi>k</m:mi></m:math>-th row of the trigonometric kernel matrix as defined by <link target-id="uid11"/>.</para>
+      <para id="id131084">One can apply the basic IRLS approach described in <link target-id=""/> to solve <link target-id="uid14"/> by posing this problem as a weighted least squares one:</para>
+      <equation id="uid15"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:munder>
+<m:mrow>
+              <m:mtext>min</m:mtext>
+</m:mrow>
+<m:mrow>        
+      <m:mi>a</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:mspace width="0.277778em"/>
+            <m:munder>
+<m:mrow>         
+     <m:mo>∑</m:mo>
+</m:mrow>
+<m:mrow>        
+      <m:mi>k</m:mi>
+</m:mrow>        
+    </m:munder>
+            <m:msub>
+              <m:mi>w</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:msub>
+                  <m:mi>D</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>-</m:mo>
+                <m:msub>
+                  <m:mi>C</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mi>a</m:mi>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mn>2</m:mn>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id131170">The main issue becomes iteratively finding suitable weights <m:math overflow="scroll"><m:mi>w</m:mi></m:math> for <link target-id="uid15"/> so that the algorithm converges to the optimal solution <m:math overflow="scroll"><m:msup><m:mi>a</m:mi><m:mo>⋆ </m:mo></m:msup></m:math> of the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem <link target-id="uid13"/>. Existence of adequate weights is guaranteed by Theorem <link target-id=""/> as presented in <link target-id=""/>; finding these optimal weights is indeed the difficult part. Clearly a reasonable choice for <m:math overflow="scroll"><m:mi>w</m:mi></m:math> is that which turns <link target-id="uid15"/> into <link target-id="uid14"/>, namely</para>
+      <equation id="id131247">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>w</m:mi>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>D</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi mathvariant="bold">C</m:mi>
+                <m:mi>a</m:mi>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id131288">Therefore the basic IRLS algorithm for problem <link target-id="uid14"/> would be:</para>
+      <list id="id131299" display="block" list-type="enumerated">
+        <item id="uid16">Initialize the weights <m:math overflow="scroll"><m:msub><m:mi>w</m:mi><m:mn>0</m:mn></m:msub></m:math> (a reasonable choice is to make them all equal to one).
+</item>
+        <item id="uid17">At the <m:math overflow="scroll"><m:mi>i</m:mi></m:math>-th iteration the solution is given by
+<equation id="uid18"><m:math overflow="scroll" mode="display"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:msup><m:mrow><m:mo>[</m:mo><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi mathvariant="bold">C</m:mi><m:mo>]</m:mo></m:mrow><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi>D</m:mi></m:mrow></m:math></equation></item>
+        <item id="uid19">Update the weights with
+<equation id="id131477"><m:math overflow="scroll" mode="display"><m:mrow><m:msub><m:mi>w</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:msup><m:mrow><m:mo>|</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>|</m:mo></m:mrow><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow></m:msup></m:mrow></m:math></equation></item>
+        <item id="uid20">Repeat the last steps until convergence is reached.
+</item>
+      </list>
+      <para id="id131553">It is important to note from Appendix <link target-id=""/> that <m:math overflow="scroll"><m:mrow><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mrow><m:mo>(</m:mo><m:msqrt><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub></m:msqrt><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. In practice it has been found that this approach has practical defficiencies, since the inversion required by <link target-id="uid18"/> often leads to an ill-posed problem and, in most cases, convergence is not achieved.</para>
+      <para id="id131602">As mentioned before, the basic IRLS method has drawbacks that make it unsuitable for practical implementations. Charles Lawson considered a version of this algorithm applied to the solution of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> problems (for details refer to <link target-id="bid3"/>). His method has linear convergence and is prone to problems with proportionately small residuals that could lead to zero weights and the need for restarting the algorithm. In the context of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> optimization, Rice and Usow <link target-id="bid4"/> built upon Lawson's method by adapting it to <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problems. Like Lawson's methods, the algorithm by Rice and Usow updates the weights in a multiplicative manner; their method shares similar drawbacks with Lawson's. Rice and Usow defined</para>
+      <equation id="id131665">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>w</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msubsup>
+              <m:mi>w</m:mi>
+              <m:mi>i</m:mi>
+              <m:mi>α</m:mi>
+            </m:msubsup>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:msub>
+                  <m:mi>ϵ</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mi>β</m:mi>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id131742">where</para>
+      <equation id="id131748">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>α</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>γ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>γ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id131796">and</para>
+      <equation id="id131802">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>β</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mi>α</m:mi>
+              <m:mrow>
+                <m:mn>2</m:mn>
+                <m:mi>γ</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mn>2</m:mn>
+                <m:mi>γ</m:mi>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+                <m:mo>+</m:mo>
+                <m:mn>2</m:mn>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id131859">and follow the basic algorithm.</para>
+      <para id="id131864">L. A. Karlovitz realized the computational problems associated with the basic IRLS method and improved on it by partially updating the filter coefficient vector. He defines</para>
+      <equation id="uid21">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mover accent="true">
+                <m:mi>a</m:mi>
+                <m:mo>^</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:msup>
+                  <m:mi mathvariant="bold">C</m:mi>
+                  <m:mi>T</m:mi>
+                </m:msup>
+                <m:msubsup>
+                  <m:mi mathvariant="bold">W</m:mi>
+                  <m:mi>i</m:mi>
+                  <m:mi>T</m:mi>
+                </m:msubsup>
+                <m:msub>
+                  <m:mi mathvariant="bold">W</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+                <m:mi mathvariant="bold">C</m:mi>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msup>
+            <m:msup>
+              <m:mi mathvariant="bold">C</m:mi>
+              <m:mi>T</m:mi>
+            </m:msup>
+            <m:msubsup>
+              <m:mi mathvariant="bold">W</m:mi>
+              <m:mi>i</m:mi>
+              <m:mi>T</m:mi>
+            </m:msubsup>
+            <m:msub>
+              <m:mi mathvariant="bold">W</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+            <m:mi>D</m:mi>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id131990">and uses <m:math overflow="scroll"><m:mover accent="true"><m:mi>a</m:mi><m:mo>^</m:mo></m:mover></m:math> in</para>
+      <equation id="uid22">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>λ</m:mi>
+            <m:msub>
+              <m:mover accent="true">
+                <m:mi>a</m:mi>
+                <m:mo>^</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>+</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>-</m:mo>
+              <m:mi>λ</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id132084">where <m:math overflow="scroll"><m:mrow><m:mi>λ</m:mi><m:mspace width="-0.166667em"/><m:mo>∈</m:mo><m:mspace width="-0.166667em"/><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math> is a partial step parameter that must be adjusted at each iteration. Karlovitz's method <link target-id="bid5"/> has been shown to converge globally for even values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> (where <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>). In practice, convergence problems have been found even under such assumptions. Karlovitz proposed the use of line searches to find the <emphasis effect="italics">optimal</emphasis> value of <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> at each iteration, which basically creates an independent optimization problem nested inside each iteration of the IRLS algorithm. While computationally this search process for the optimal <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> makes Karlovitz's method impractical, his work indicates the feasibility of IRLS methods and proves that partial updating indeed overcomes some of the problems in the basic IRLS method. Furthermore, Karlovitz's method is the first one to depart from a multiplicative updating of the weights in favor of an additive updating on the filter coefficients. In this way some of the problems in the Lawson-Rice-Usow approach are overcome, especially the need for restarting the algorithm.</para>
+      <para id="id132199">S. W. Kahng built upon the findings by Karlovitz by considering the process of finding an adequate <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> for partial updating. He applied Newton-Raphson's method to this problem and proposed a closed form solution for <m:math overflow="scroll"><m:mi>λ</m:mi></m:math>, given by</para>
+      <equation id="uid23">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>λ</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mn>1</m:mn>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id132252">resulting in</para>
+      <equation id="uid24">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>λ</m:mi>
+            <m:msub>
+              <m:mover accent="true">
+                <m:mi>a</m:mi>
+                <m:mo>^</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msub>
+            <m:mo>+</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>-</m:mo>
+              <m:mi>λ</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id132330">The rest of Kahng's algorithm follows Karlovitz's approach. However, since <m:math overflow="scroll"><m:mi>λ</m:mi></m:math> is fixed, there is no need to perform the linear search at each iteration. Kahng's method has an added benefit: since it uses Newton's method to find <m:math overflow="scroll"><m:mi>λ</m:mi></m:math>, the algorithm tends to converge much faster than previous approaches. It has indeed been shown to converge quadratically. However, Newton-Raphson-based algorithms are not guaranteed to converge globally unless at some point the existing solution lies close enough to the solution, within their radius of convergence <link target-id="bid6"/>. Fletcher, Grant and Hebden<link target-id="bid7"/> derived the same results independently.</para>
+      <para id="id132370">Burrus, Barreto and Selesnick <link target-id="bid8"/>, <link target-id="bid9"/>, <link target-id="bid10"/> modified Kahng's methods in several important ways in order to improve on their initial and final convergence rates and the method's stability (we refer to this method as BBS). The first improvement is analogous to a <emphasis effect="italics">homotopy</emphasis> <link target-id="bid11"/>. Up to this point all efforts in <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> filter design attempted to solve the <emphasis effect="italics">actual</emphasis><space count="1"/> <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> problem from the first iteration. In general there is no reason to believe that an initial guess derived from an unweighted <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> formulation (that is, the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> design that one would get by setting <m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mover accent="true"><m:mn>1</m:mn><m:mo>^</m:mo></m:mover></m:mrow></m:math>) will look in any way similar to the actual <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution that one is interested in. However it is known that there exists a continuity of <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solutions for <m:math overflow="scroll"><m:mrow><m:mn>1</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>. In other words, if <m:math overflow="scroll"><m:msubsup><m:mi>a</m:mi><m:mn>2</m:mn><m:mo>⋆ </m:mo></m:msubsup></m:math> is the optimal <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> solution, there exists a <m:math overflow="scroll"><m:mi>p</m:mi></m:math> for which the optimal <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution <m:math overflow="scroll"><m:msubsup><m:mi>a</m:mi><m:mi>p</m:mi><m:mo>⋆ </m:mo></m:msubsup></m:math> is arbitrarily close to <m:math overflow="scroll"><m:msubsup><m:mi>a</m:mi><m:mn>2</m:mn><m:mo>⋆ </m:mo></m:msubsup></m:math>; that is, for a given <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mspace width="-0.166667em"/><m:mo>&gt;</m:mo><m:mspace width="-0.166667em"/><m:mn>0</m:mn></m:mrow></m:math></para>
+      <equation id="id132665"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mrow>
+              <m:mo>∥</m:mo>
+              <m:msubsup>
+                <m:mi>a</m:mi>
+                <m:mn>2</m:mn>
+                <m:mo>⋆ </m:mo>
+              </m:msubsup>
+              <m:mo>-</m:mo>
+              <m:msubsup>
+                <m:mi>a</m:mi>
+                <m:mi>p</m:mi>
+                <m:mo>⋆ </m:mo>
+              </m:msubsup>
+              <m:mo>∥</m:mo>
+            </m:mrow>
+            <m:mspace width="-0.166667em"/>
+            <m:mo>≤</m:mo>
+            <m:mspace width="-0.166667em"/>
+            <m:mi>δ</m:mi>
+            <m:mspace width="28.45274pt"/>
+            <m:mtext>for</m:mtext>
+            <m:mspace width="4.pt"/>
+            <m:mtext>some</m:mtext>
+            <m:mspace width="4.pt"/>
+            <m:mi>p</m:mi>
+            <m:mo>∈</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mo>,</m:mo>
+              <m:mi>∞</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id132747">This fact allows anyone to <emphasis effect="italics">gradually move</emphasis> from an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution to an <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>q</m:mi></m:msub></m:math> solution.</para>
+      <para id="id132788">To accelerate initial convergence, the BBS method of Burrus et al. initially solves for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> by setting <m:math overflow="scroll"><m:mrow><m:msub><m:mi>p</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mn>2</m:mn></m:mrow></m:math> and then sets <m:math overflow="scroll"><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mi>σ</m:mi><m:mo>·</m:mo><m:msub><m:mi>p</m:mi><m:mrow><m:mi>i</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub></m:mrow></m:math>, where <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> is a convergence parameter defined by <m:math overflow="scroll"><m:mrow><m:mn>1</m:mn><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>σ</m:mi><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mn>2</m:mn></m:mrow></m:math>. Therefore at the <m:math overflow="scroll"><m:mi>i</m:mi></m:math>-th iteration</para>
+      <equation id="uid25">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>p</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mtext>min</m:mtext>
+            <m:mspace width="0.277778em"/>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:msub>
+                <m:mi>p</m:mi>
+                <m:mrow>
+                  <m:mi>d</m:mi>
+                  <m:mi>e</m:mi>
+                  <m:mi>s</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mo>,</m:mo>
+              <m:mi>σ</m:mi>
+              <m:msub>
+                <m:mi>p</m:mi>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:msub>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id132980">where <m:math overflow="scroll"><m:msub><m:mi>p</m:mi><m:mrow><m:mi>d</m:mi><m:mi>e</m:mi><m:mi>s</m:mi></m:mrow></m:msub></m:math> corresponds to the desired <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> solution. The implementation of each iteration follows Karlovitz's method with Kahng's choice of <m:math overflow="scroll"><m:mi>λ</m:mi></m:math>, using the particular selection of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> given by <link target-id="uid25"/>.</para>
+      <para id="id133043">To summarize, define the class of IRLS algorithms as follows: after <m:math overflow="scroll"><m:mi>i</m:mi></m:math> iterations, given a vector <m:math overflow="scroll"><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub></m:math> the IRLS iteration requires two steps,</para>
+      <list id="id133070" display="block" list-type="enumerated">
+        <item id="uid26">Find <m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mi>f</m:mi><m:mrow><m:mo>(</m:mo><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item>
+        <item id="uid27">Find <m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:mi>g</m:mi><m:mrow><m:mo>(</m:mo><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item>
+      </list>
+      <para id="id133176">The following is a summary of the IRLS-based algorithms discussed so far and their corresponding updating functions:</para>
+      <list id="id133180" display="block" list-type="enumerated">
+        <item id="uid28">Basic IRLS algorithm.
+<list id="id133195" display="block" list-type="bulleted"><item id="uid29"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:msup><m:mrow><m:mo>|</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>|</m:mo></m:mrow><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow></m:msup></m:mrow></m:math></item><item id="uid30"><m:math overflow="scroll"><m:mrow><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mrow><m:mo>(</m:mo><m:msqrt><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub></m:msqrt><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item><item id="uid31"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:msup><m:mfenced separators="" open="[" close="]"><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi mathvariant="bold">C</m:mi></m:mfenced><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi>D</m:mi></m:mrow></m:math></item></list></item>
+        <item id="uid32">Rice-Usow-Lawson (RUL) method
+<list id="id133435" display="block" list-type="bulleted"><item id="uid33"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:msubsup><m:mi>w</m:mi><m:mrow><m:mi>i</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow><m:mi>α</m:mi></m:msubsup><m:msup><m:mrow><m:mo>|</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>|</m:mo></m:mrow><m:mfrac><m:mi>α</m:mi><m:mrow><m:mn>2</m:mn><m:mi>γ</m:mi></m:mrow></m:mfrac></m:msup></m:mrow></m:math></item><item id="uid34"><m:math overflow="scroll"><m:mrow><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mrow><m:mo>(</m:mo><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item><item id="uid35"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:msup><m:mfenced separators="" open="[" close="]"><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi mathvariant="bold">C</m:mi></m:mfenced><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi>D</m:mi></m:mrow></m:math></item><item id="uid36"><m:math overflow="scroll"><m:mrow><m:mi>α</m:mi><m:mo>=</m:mo><m:mfrac><m:mrow><m:mi>γ</m:mi><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn><m:mo>)</m:mo></m:mrow><m:mrow><m:mi>γ</m:mi><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn><m:mo>)</m:mo><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mrow></m:math></item><item id="uid37"><m:math overflow="scroll"><m:mi>γ</m:mi></m:math> constant
+</item></list></item>
+        <item id="uid38">Karlovitz' method
+<list id="id133770" display="block" list-type="bulleted"><item id="uid39"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:msup><m:mrow><m:mo>|</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>|</m:mo></m:mrow><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow></m:msup></m:mrow></m:math></item><item id="uid40"><m:math overflow="scroll"><m:mrow><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mrow><m:mo>(</m:mo><m:msqrt><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub></m:msqrt><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item><item id="uid41"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:mi>λ</m:mi><m:msup><m:mfenced separators="" open="[" close="]"><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi mathvariant="bold">C</m:mi></m:mfenced><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi>D</m:mi><m:mo>+</m:mo><m:mrow><m:mo>(</m:mo><m:mn>1</m:mn><m:mo>-</m:mo><m:mi>λ</m:mi><m:mo>)</m:mo></m:mrow><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub></m:mrow></m:math></item><item id="uid42"><m:math overflow="scroll"><m:mi>λ</m:mi></m:math> constant
+</item></list></item>
+        <item id="uid43">Kahng's method
+<list id="id134054" display="block" list-type="bulleted"><item id="uid44"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:msup><m:mrow><m:mo>|</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>|</m:mo></m:mrow><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow></m:msup></m:mrow></m:math></item><item id="uid45"><m:math overflow="scroll"><m:mrow><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mrow><m:mo>(</m:mo><m:msqrt><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub></m:msqrt><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item><item id="uid46"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:mfenced separators="" open="(" close=")"><m:mfrac><m:mn>1</m:mn><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mfenced><m:msup><m:mfenced separators="" open="[" close="]"><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi mathvariant="bold">C</m:mi></m:mfenced><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi>D</m:mi><m:mo>+</m:mo><m:mfenced separators="" open="(" close=")"><m:mfrac><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mfenced><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub></m:mrow></m:math></item></list></item>
+        <item id="uid47">BBS method
+<list id="id134347" display="block" list-type="bulleted"><item id="uid48"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>min</m:mtext><m:mspace width="0.277778em"/><m:mrow><m:mo>(</m:mo><m:msub><m:mi>p</m:mi><m:mrow><m:mi>d</m:mi><m:mi>e</m:mi><m:mi>s</m:mi></m:mrow></m:msub><m:mo>,</m:mo><m:mi>σ</m:mi><m:mo>·</m:mo><m:msub><m:mi>p</m:mi><m:mrow><m:mi>i</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item><item id="uid49"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:msup><m:mrow><m:mo>|</m:mo><m:mi>D</m:mi><m:mo>-</m:mo><m:mi mathvariant="bold">C</m:mi><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub><m:mo>|</m:mo></m:mrow><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow></m:msup></m:mrow></m:math></item><item id="uid50"><m:math overflow="scroll"><m:mrow><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mtext>diag</m:mtext><m:mrow><m:mo>(</m:mo><m:msqrt><m:msub><m:mi>w</m:mi><m:mi>i</m:mi></m:msub></m:msqrt><m:mo>)</m:mo></m:mrow></m:mrow></m:math></item><item id="uid51"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:mfenced separators="" open="(" close=")"><m:mfrac><m:mn>1</m:mn><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mfenced><m:msup><m:mfenced separators="" open="[" close="]"><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi mathvariant="bold">C</m:mi></m:mfenced><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:msubsup><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi><m:mi>T</m:mi></m:msubsup><m:msub><m:mi mathvariant="bold">W</m:mi><m:mi>i</m:mi></m:msub><m:mi>D</m:mi><m:mo>+</m:mo><m:mfenced separators="" open="(" close=")"><m:mfrac><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mfenced><m:msub><m:mi>a</m:mi><m:mi>i</m:mi></m:msub></m:mrow></m:math></item><item id="uid52"><m:math overflow="scroll"><m:mi>σ</m:mi></m:math> constant
+</item></list></item>
+      </list>
+    </section>
+    <section id="uid53">
+      <title>Modified <emphasis effect="italics">adaptive</emphasis> IRLS algorithm</title>
+      <para id="id134760">Much of the performance of a method is based upon whether it can actually converge given a certain error measure. In the case of the methods described above, both convergence rate and stability play an important role in their performance. Both Karlovitz and RUL methods are supposed to converge linearly, while Kahng's and the BBS methods converge quadratically, since they both use a Newton-based additive update of the weights.</para>
+      <para id="id134767">Barreto showed in <link target-id="bid9"/> that the modified version of Kahng's method (or BBS) typically converges faster than the RUL algorithm. However, this approach presents some peculiar problems that depend on the transition bandwidth <m:math overflow="scroll"><m:mi>β</m:mi></m:math>. For some particular values of <m:math overflow="scroll"><m:mi>β</m:mi></m:math>, the BBS method will result in an ill-posed weight matrix that causes the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> error to increase dramatically after a few iterations as illustrated in <link target-id="uid54"/> (where <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mo>=</m:mo><m:mi>ω</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>).</para>
+      <figure id="uid54"><media id="uid54_media" alt="This image contains two graphs. The upper graph is labeled f_p=0.2, f_s=0.25. The bottom graph is labeled f_p=0.2, f_s=0.248. The x and y axes of both of these graphs are labeled iteration and l_60 error respecitively.">
+          <image mime-type="image/png" src="../../media/adap1.png" id="uid54_onlineimage" width="495" print-width="4in"><!-- NOTE: attribute width changes image size online (pixels). original width is 495. --></image>  </media>
+        
+      <caption>Error jumps on IRLS methods.</caption></figure>
+      <para id="id134852">Two facts can be derived from the examples in <link target-id="uid54"/>: for this particular bandwidth the error increased slightly after the fifth and eleventh iterations, and increased dramatically after the sixteenth. Also, it is worth to notice that after such increase, the error started to decrease quadratically and that, at a certain point, the error became flat (thus reaching the numerical accuracy limits of the digital system).</para>
+      <para id="id134863">The effects of different values of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> were studied to find out if a relationship between <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> and the error increase could be determined. <link target-id="uid55"/> shows the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> error for different values of <m:math overflow="scroll"><m:mi>β</m:mi></m:math> and for <m:math overflow="scroll"><m:mrow><m:mi>σ</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>7</m:mn></m:mrow></m:math>. It can be seen that some particular bandwidths cause the algorithm to produce a very large error.</para>
+      <figure id="uid55"><media id="uid55_media" alt="This three dimensional graph demonstrates the L_P error for different bandwidths,f_P=0.2. Both Iteration and Bandwidth are compared against L_P error on the y-axis.The most prominent error jumps are at bandwidths 0.01 and 0.05.">
+          <image mime-type="image/png" src="../../media/adap2.png" id="uid55_onlineimage" width="507" print-width="4in"><!-- NOTE: attribute width changes image size online (pixels). original width is 507. --></image>
+        </media>
+        
+      <caption>Relationship between bandwidth and error jumps.</caption></figure>
+      <para id="id134947">Our studies (as well as previous work from J. A. Barreto <link target-id="bid9"/>) demonstrate that this error explosion occurs only for a small range of bandwidth specifications. Under most circumstances the BBS method exhibits fast convergence properties to the desired solution. However at this point it is not understood what causes the error increase and therefore this event cannot be anticipated. In order to avoid such problem, I propose the use of an adaptive scheme that modifies the BBS step. As <m:math overflow="scroll"><m:mi>p</m:mi></m:math> increases the step from a current <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math>  guess to the next also increases, as described in <link target-id="uid25"/>. In other words, at the <m:math overflow="scroll"><m:mi>i</m:mi></m:math>-th iteration one approximates the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mrow><m:mn>2</m:mn><m:msup><m:mi>σ</m:mi><m:mi>i</m:mi></m:msup></m:mrow></m:msub></m:math>  solution (as long as the algorithm has not yet reached the desired <m:math overflow="scroll"><m:mi>p</m:mi></m:math>); the next iteration one approximates <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mrow><m:mn>2</m:mn><m:msup><m:mi>σ</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msup></m:mrow></m:msub></m:math>. There is always a possibility that these two solutions lie far apart enough that the algorithm takes a descent step so that the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mrow><m:mn>2</m:mn><m:msup><m:mi>σ</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msup></m:mrow></m:msub></m:math><emphasis effect="italics">guess</emphasis> is too far away from the actual <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mrow><m:mn>2</m:mn><m:msup><m:mi>σ</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msup></m:mrow></m:msub></m:math><space count="1"/><emphasis effect="italics">solution</emphasis>. This is better illustrated in <link target-id="uid56"/>.</para>
+      <figure id="uid56"><media id="uid56_media" alt="There is a curved line segment with four points along the line. From left to right the points are l_2, l_2σ k, l_2σ k+1, and l_p_des. At the point l_2σ k a thin straight arrow points down and to the right.">
+          <image mime-type="image/png" src="../../media/adapt1.png" id="uid56_onlineimage" width="432" print-width="2.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 432. --></image>
+           </media>
+        
+      <caption>A step too long for IRLS methods.</caption></figure>
+      <para id="id135145">The conclusions derived above suggest the possibility to use an adaptive algorithm <link target-id="bid12"/> that changes the value of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> so that the error always decreases. This idea was implemented by calculating temporary new weight and filter coefficient vectors that will not become the updated versions unless their resulting error is smaller than the previous one. If this is not the case, the algorithm "tries" two values of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math>, namely</para>
+      <equation id="uid57">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>σ</m:mi>
+              <m:mi>L</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>σ</m:mi>
+            <m:mo>*</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>-</m:mo>
+              <m:mi>δ</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="2.em"/>
+            <m:mtext>and</m:mtext>
+            <m:mspace width="2.em"/>
+            <m:msub>
+              <m:mi>σ</m:mi>
+              <m:mi>H</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>σ</m:mi>
+            <m:mo>*</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:mi>δ</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id135251">(where <m:math overflow="scroll"><m:mi>δ</m:mi></m:math> is an updating variable). The resulting errors for each attempt are calculated, and <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> is updated according to the value that produced the smallest error. The error of this new <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> is compared to the error of the nonupdated weights and coefficients, and if the new <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> produces a smaller error, then such vectors are updated; otherwise another update of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> is performed. The <emphasis effect="italics">modified adaptive IRLS algorithm</emphasis> can be summarized as follows,</para>
+      <list id="id135311" display="block" list-type="enumerated">
+        <item id="uid58">Find the unweighted approximation <m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:msup><m:mfenced separators="" open="[" close="]"><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:mi mathvariant="bold">C</m:mi></m:mfenced><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:msup><m:mi mathvariant="bold">C</m:mi><m:mi>T</m:mi></m:msup><m:mi>D</m:mi></m:mrow></m:math> and use <m:math overflow="scroll"><m:mrow><m:msub><m:mi>p</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mn>2</m:mn><m:mi>σ</m:mi></m:mrow></m:math> (with <m:math overflow="scroll"><m:mrow><m:mn>1</m:mn><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mi>σ</m:mi><m:mspace width="-0.166667em"/><m:mo>≤</m:mo><m:mspace width="-0.166667em"/><m:mn>2</m:mn></m:mrow></m:math>)
+</item>
+        <item id="uid59">Iteratively solve <link target-id="uid21"/> and <link target-id="uid22"/> using <m:math overflow="scroll"><m:mrow><m:msub><m:mi>λ</m:mi><m:mi>i</m:mi></m:msub><m:mo>=</m:mo><m:mfrac><m:mn>1</m:mn><m:mrow><m:msub><m:mi>p</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mrow></m:math> and find the resulting error <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>i</m:mi></m:msub></m:math> for the <m:math overflow="scroll"><m:mi>i</m:mi></m:math>-th iteration
+</item>
+        <item id="uid60">If <m:math overflow="scroll"><m:mrow><m:msub><m:mi>ε</m:mi><m:mi>i</m:mi></m:msub><m:mo>≫</m:mo><m:msub><m:mi>ε</m:mi><m:mrow><m:mi>i</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub></m:mrow></m:math>,
+<list id="id135562" display="block" list-type="bulleted"><item id="uid61">Calculate <link target-id="uid57"/>
+</item><item id="uid62">Select the smallest of <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:msub><m:mi>σ</m:mi><m:mi>L</m:mi></m:msub></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:msub><m:mi>σ</m:mi><m:mi>H</m:mi></m:msub></m:msub></m:math> to compare it with <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>i</m:mi></m:msub></m:math> until a value is found that results in a decreasing error
+</item></list>
+Otherwise iterate as in the BBS algorithm.
+</item>
+      </list>
+      <figure id="uid63"><media id="uid63_media" alt="This image contains two graphs. The upper graph represents L_p error (f_P=0.2,β=0.048,K_α=1.75) and the lower graph represents Variations in K. L_p error is represented on the y-axis for the upper graph while the y axis represents K on the lower graph. For both graphs, Iterations are represented on the x-axis. ">
+          <image mime-type="image/png" src="../../media/adap3.png" id="uid63_onlineimage" width="493" print-width="4in"><!-- NOTE: attribute width changes image size online (pixels). original width is 493. --></image>
+        </media>
+        
+      <caption>FIR design example using adaptive method. a) <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> error obtained with the adaptive method; b) Change of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math>.</caption></figure>
+      <para id="id135692">The algorithm described above changes the value of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> that causes the algorithm to produce a large error. The value of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> is updated as many times as necessary without changing the values of the weights, the filter coefficients, or <m:math overflow="scroll"><m:mi>p</m:mi></m:math>. If an optimal value of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> exists, the algorithm will find it and continue with this new value until another update in <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> becomes necessary.</para>
+      <para id="id135743">The algorithm described above was implemented for several combinations of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> and <m:math overflow="scroll"><m:mi>β</m:mi></m:math>; for all cases the new algorithm converged faster than the BBS algorithm (unless the values of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> and <m:math overflow="scroll"><m:mi>β</m:mi></m:math> are such that the error never increases). The results are shown in <link target-id="uid63"/>.a for the specifications from <link target-id="uid54"/>. Whereas using the BBS method for this particular case results in a large error after the sixteenth iteration, the adaptive method converged before ten iterations.</para>
+      <para id="id135795"><link target-id="uid63"/>.b illustrates the change of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> per iteration in the adaptive method, using an update factor of <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>1</m:mn></m:mrow></m:math>. The <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> error stops decreasing after the fifth iteration (where the BBS method introduces the large error); however, the adaptive algorithm adjusts the value of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> so that the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> error continues decreasing. The algorithm decreased the initial value of <m:math overflow="scroll"><m:mi>σ</m:mi></m:math> from 1.75 to its final value of 1.4175 (at the expense of only one additional iteration with <m:math overflow="scroll"><m:mrow><m:mi>σ</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>575</m:mn></m:mrow></m:math>).</para>
+      <figure id="uid64"><media id="uid64_media" alt="A graph representing L_2-L_∞ Error for L_p designs. The x-axis is labeled E_2 and the y-axis is labeled E_∞.">
+          <image mime-type="image/png" src="../../media/lp_curve.png" id="uid64_onlineimage" width="578" print-width="3.5in"><!-- NOTE: attribute width changes image size online (pixels). original width is 578. --></image>
+        </media>
+        
+      <caption>Relationship between <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> errors for <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> FIR filter design.</caption></figure>
+      <para id="id135956">One result worth noting is the relationship between <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> solutions and how they compare to <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> designs. <link target-id="uid64"/> shows a comparison of designs for a length-21 Type-I linear phase low pass FIR filter with transition band defined by <m:math overflow="scroll"><m:mrow><m:mi>f</m:mi><m:mo>=</m:mo><m:mo>{</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>24</m:mn><m:mo>}</m:mo></m:mrow></m:math>. The curve shows the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> versus <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> errors (namely <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>∞</m:mi></m:msub></m:math>); the values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> used to make this curve were <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mo>{</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo>,</m:mo><m:mn>3</m:mn><m:mo>,</m:mo><m:mn>4</m:mn><m:mo>,</m:mo><m:mn>5</m:mn><m:mo>,</m:mo><m:mn>7</m:mn><m:mo>,</m:mo><m:mn>10</m:mn><m:mo>,</m:mo><m:mn>15</m:mn><m:mo>,</m:mo><m:mn>20</m:mn><m:mo>,</m:mo><m:mn>30</m:mn><m:mo>,</m:mo><m:mn>50</m:mn><m:mo>,</m:mo><m:mn>60</m:mn><m:mo>,</m:mo><m:mn>100</m:mn><m:mo>,</m:mo><m:mn>150</m:mn><m:mo>,</m:mo><m:mn>200</m:mn><m:mo>,</m:mo><m:mn>400</m:mn><m:mo>,</m:mo><m:mi>∞</m:mi><m:mo>}</m:mo></m:mrow></m:math> (Matlab's <code display="inline">firls</code> and <code display="inline">firpm</code> functions were used to design the <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math> filters respectively). Note the very small decrease in <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>∞</m:mi></m:msub></m:math> after <m:math overflow="scroll"><m:mi>p</m:mi></m:math> reaches 100. The curve suggests that a better compromise between <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>ε</m:mi><m:mi>∞</m:mi></m:msub></m:math> can be reached by choosing <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>p</m:mi><m:mspace width="-0.166667em"/><m:mo>&lt;</m:mo><m:mspace width="-0.166667em"/><m:mi>∞</m:mi></m:mrow></m:math>. Furthermore, to get better results one can concentrate on values between <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>5</m:mn></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>; fortunately, for values of <m:math overflow="scroll"><m:mi>p</m:mi></m:math> so low no numerical complications arise and convergence is reached in a few iterations.</para>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid6">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Aoki, Masanao</bib:author>
+        <bib:title>Introduction to Optimization Techniques</bib:title>
+        <bib:publisher>The Macmillan Company</bib:publisher>
+        <bib:year>1971</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid9">
+      <bib:mastersthesis>
+        <!--required fields-->
+        <bib:author>Barreto, Jose A.</bib:author>
+        <bib:title><!--no math allowed in bib entries--> Approximation by the Iterative Reweighted Least Squares Method and the Design of Digital FIR Filters in One Dimension</bib:title>
+        <bib:school>Rice University</bib:school>
+        <bib:year>1992</bib:year>
+        <!--optional fields-->
+        <bib:type>Masters thesis</bib:type>
+        <bib:address/>
+        <bib:month/>
+        <bib:note/>
+      </bib:mastersthesis>
+    </bib:entry>
+    <bib:entry id="bid10">
+      <bib:inproceedings>
+        <!--required fields-->
+        <bib:author>Burrus, C. S. and Barreto, J. A.</bib:author>
+        <bib:title>Least <!--no math allowed in bib entries-->-power Error Design of FIR Filters</bib:title>
+        <bib:booktitle>Proc. IEEE Int. Symp. Circuits, Syst. ISCAS-92</bib:booktitle>
+        <bib:year>1992</bib:year>
+        <!--optional fields-->
+        <bib:editor/>
+        <bib:volume>2</bib:volume>
+        <bib:series/>
+        <bib:pages>545-548</bib:pages>
+        <bib:address>San Diego, CA</bib:address>
+        <bib:month>May</bib:month>
+        <bib:organization/>
+        <bib:publisher/>
+        <bib:note/>
+      </bib:inproceedings>
+    </bib:entry>
+    <bib:entry id="bid8">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Burrus, C. S. and Barreto, J. A. and Selesnick, I. W.</bib:author>
+        <bib:title>Iterative Reweighted Least-Squares Design of FIR Filters</bib:title>
+        <bib:journal>IEEE Transactions on Signal Processing</bib:journal>
+        <bib:year>1994</bib:year>
+        <!--optional fields-->
+        <bib:volume>42</bib:volume>
+        <bib:number>11</bib:number>
+        <bib:pages>2926-2936</bib:pages>
+        <bib:month>November</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid2">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Burrus, Charles S. and McClellan, James H</bib:author>
+        <bib:title>Computer-based Exercises for Signal Processing</bib:title>
+        <bib:publisher>Prentice Hall</bib:publisher>
+        <bib:year>1994</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid7">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Fletcher, R. and Grant, J. A. and Hebden, M. D.</bib:author>
+        <bib:title>The Calculation of Linear Best <!--no math allowed in bib entries--> Approximations</bib:title>
+        <bib:journal>The Computer Journal</bib:journal>
+        <bib:year>1972</bib:year>
+        <!--optional fields-->
+        <bib:volume>14</bib:volume>
+        <bib:number>118</bib:number>
+        <bib:pages>276-279</bib:pages>
+        <bib:month>Apr</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid5">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Karlovitz, L. A.</bib:author>
+        <bib:title>Construction of Nearest Points in the <!--no math allowed in bib entries-->, <!--no math allowed in bib entries--> even and <!--no math allowed in bib entries--> norms, I.</bib:title>
+        <bib:journal>Journal of Approximation Theory</bib:journal>
+        <bib:year>1970</bib:year>
+        <!--optional fields-->
+        <bib:volume>3</bib:volume>
+        <bib:number/>
+        <bib:pages>123-127</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid3">
+      <bib:phdthesis>
+        <!--required fields-->
+        <bib:author>Lawson, C. L.</bib:author>
+        <bib:title>Contributions to the Theory of Linear Least Maximum Approximations</bib:title>
+        <bib:school>UCLA</bib:school>
+        <bib:year>1961</bib:year>
+        <!--optional fields-->
+        <bib:type>Ph. D. Thesis</bib:type>
+        <bib:address/>
+        <bib:month/>
+        <bib:note/>
+      </bib:phdthesis>
+    </bib:entry>
+    <bib:entry id="bid11">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Nocedal, Jorge and Wright, Stephen J.</bib:author>
+        <bib:title>Numerical Optimization</bib:title>
+        <bib:publisher>Springer-Verlag</bib:publisher>
+        <bib:year>1999</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series>Springer series in operations research</bib:series>
+        <bib:address>New York, NY</bib:address>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid1">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Oppenheim, A. V. and Schafer, R. W.</bib:author>
+        <bib:title>Discrete-Time Signal Processing</bib:title>
+        <bib:publisher>Prentice-Hall</bib:publisher>
+        <bib:year>1989</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address>Englewood Cliffs, N.J.</bib:address>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Parks, T. W. and Burrus, C. S.</bib:author>
+        <bib:title>Digital Filter Design</bib:title>
+        <bib:publisher>John Wiley and Sons</bib:publisher>
+        <bib:year>1987</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid4">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Rice, John R. and Usow, Karl H.</bib:author>
+        <bib:title>The Lawson Algorithm and Extensions</bib:title>
+        <bib:journal>Mathematics of Computation</bib:journal>
+        <bib:year>1968</bib:year>
+        <!--optional fields-->
+        <bib:volume>22</bib:volume>
+        <bib:number/>
+        <bib:pages>118-127</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+    <bib:entry id="bid12">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>Vargas, Ricardo A. and Burrus, Charles S.</bib:author>
+        <bib:title>Adaptive Iterative Reweighted Least Squares Design of <!--no math allowed in bib entries--> FIR Filters</bib:title>
+        <bib:journal>Proc. ICASSP</bib:journal>
+        <bib:year>1999</bib:year>
+        <!--optional fields-->
+        <bib:volume>3, Signal Processing, Theory and Methods</bib:volume>
+        <bib:number/>
+        <bib:pages>1129-32</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+  </bib:file>
+</document>

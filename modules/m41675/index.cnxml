@@ -1,0 +1,14 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML">
+  <title>Complex l_p problem</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m41675</md:content-id>
+  <md:title>Complex l_p problem</md:title>
+  <md:abstract/>
+  <md:uuid>a16733e7-3bfb-4a7e-90a5-8f12d4c7e601</md:uuid>
+</metadata>
+
+<content>
+    <para id="id2569117">The design of linear phase filters has been intensively discussed in literature. For the two most common error criteria (<m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>∞</m:mi></m:msub></m:math>), optimal solution algorithms exist. The least squares norm filter can be found by solving an overdetermined system of equations, whereas the Chebishev norm filter is easily found by using either the Remez algorithm or linear programming. For many typical applications, linear phase filters are good enough; however, when arbitrary magnitude and phase constraints are required, a more complicated approach must be taken since such design results in a complex approximation problem. By replacing <m:math overflow="scroll"><m:mi mathvariant="bold">C</m:mi></m:math> in the linear phase algorithm with a complex Fourier kernel matrix, and the real desired frequency vector <m:math overflow="scroll"><m:mi>D</m:mi></m:math> with a complex one, one can use the same algorithm from <link target-id=""/> to design complex <m:math overflow="scroll"><m:msub><m:mi>l</m:mi><m:mi>p</m:mi></m:msub></m:math> filters.</para>
+  </content>
+  
+</document>
